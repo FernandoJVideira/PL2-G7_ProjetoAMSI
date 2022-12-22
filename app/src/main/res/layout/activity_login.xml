@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity"
+    tools:context=".Views.LoginActivity"
     android:background="@drawable/ic_layoutbg">
 
     <androidx.cardview.widget.CardView
@@ -36,13 +36,14 @@
                 android:elevation="5dp"
                 android:hint="@string/txt_LogScreen_Pwd"
                 android:inputType="textPassword"
+                android:text="84518451"
                 android:paddingStart="15dp"
-                app:layout_constraintEnd_toEndOf="@+id/etEmail"
-                app:layout_constraintStart_toStartOf="@+id/etEmail"
-                app:layout_constraintTop_toBottomOf="@+id/etEmail" />
+                app:layout_constraintEnd_toEndOf="@+id/etUname"
+                app:layout_constraintStart_toStartOf="@+id/etUname"
+                app:layout_constraintTop_toBottomOf="@+id/etUname" />
 
             <EditText
-                android:id="@+id/etEmail"
+                android:id="@+id/etUname"
                 android:layout_width="250dp"
                 android:layout_height="55dp"
                 android:layout_marginTop="56dp"
@@ -50,7 +51,7 @@
                 android:ems="10"
                 android:elevation="5dp"
                 android:hint="@string/txt_LogScreen_Username"
-                android:inputType="textEmailAddress"
+                android:text="admin"
                 android:paddingStart="15dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.504"
