@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">StuffNGo</string>
+    <string name="act_livro">Detalhes: %1$s</string>
 </resources>

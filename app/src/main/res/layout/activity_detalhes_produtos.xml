@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DetalhesProdutosActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="312dp">
+
+            <LinearLayout
+                android:layout_width="144dp"
+                android:layout_height="match_parent"
+                android:layout_margin="20px"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvNomeDetalhes"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="100px"
+                    android:layout_marginTop="10px"
+                    android:paddingTop="40px"
+                    android:text="hello"
+                    android:textAlignment="viewStart"
+                    tools:layout_editor_absoluteX="193dp"
+                    tools:layout_editor_absoluteY="356dp" />
+
+                <ImageView
+                    android:id="@+id/ImageDetalhes"
+                    android:layout_width="match_parent"
+                    android:layout_height="247dp"
+                    tools:srcCompat="@tools:sample/avatars" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="204dp"
+                android:layout_height="295dp"
+                android:layout_marginLeft="100px"
+                android:layout_marginTop="70px"
+                android:layout_marginRight="30px"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Descrição :" />
+
+                <TextView
+                    android:id="@+id/tvDescricao"
+                    android:layout_width="match_parent"
+                    android:layout_height="251dp"
+                    android:text="descricao ." />
+
+                <TextView
+                    android:id="@+id/tvPrecoDetalhes"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:text="TextView" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="59dp"
+            android:orientation="vertical"
+            android:paddingLeft="40px"
+            android:paddingTop="10px"
+            android:paddingRight="40px"
+            android:paddingBottom="10px">
+
+            <Button
+                android:id="@+id/btnAdicionarCarrinho"
+                android:layout_width="381dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Button" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
