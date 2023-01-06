@@ -5,13 +5,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.os.Bundle;
-import android.content.Intent;
-import android.view.MenuItem;
-import android.view.View;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import pl2.g7.iamsi.stuffngo.databinding.ActivityMainBinding;
 
@@ -32,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
                     replaceFragment(new HomeFragment());
                     break;
                 case R.id.copoes:
-                    replaceFragment(new CopoesFragment());
+                    replaceFragment(new SenhaFragment());
                     break;
                 case R.id.qr:
                     replaceFragment(new QrFragment());
@@ -54,10 +48,12 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.frame_layout,fragment);
         fragmentTransaction.commit();
     }
+
     //Era para o botao dos produtos
-   public void OnclickListaProdutos(View view){
+
+   /*public void OnclickListaProdutos(View view){
        Intent intent = new Intent(this, ListaProdutos.class);
        startActivity(intent);
-   };
+   };*/
 
 }

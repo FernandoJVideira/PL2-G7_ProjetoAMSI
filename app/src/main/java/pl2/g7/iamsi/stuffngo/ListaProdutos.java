@@ -10,7 +10,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
-public class ListaProdutos extends AppCompatActivity {
+import pl2.g7.iamsi.stuffngo.Adapters.ListaProdutosAdapter;
+
+public class ListaProdutos extends AppCompatActivity { //Eliminar este Ficheiro
     ListView lvProdutos;
     ArrayList<Produtos> produtos;
     @Override
@@ -20,7 +22,7 @@ public class ListaProdutos extends AppCompatActivity {
 
         lvProdutos = findViewById(R.id.lvProdutos);
 
-        produtos = SingletonProdutos.getInstance().getProdutos();
+        produtos = Singleton.getInstance().getProdutos();
 
         lvProdutos.setAdapter(new ListaProdutosAdapter(this, produtos));
 

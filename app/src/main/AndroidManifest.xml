@@ -17,26 +17,33 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".DetalhesSeccaoActivity"
+            android:exported="false"
+            android:label="Tira Senhas"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <!-- Talvez de para trocar este activity -->
+        <activity
             android:name=".ListaProdutos"
             android:exported="false"
             android:label="Dados"
-            android:parentActivityName=".MainActivity"
-            >
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-        android:name=".DetalhesProdutosActivity"
-        android:exported="false"
-        android:label="Dados"
-        android:parentActivityName=".ListaProdutos"
-        >
-        <meta-data
-            android:name="android.app.lib_name"
-            android:value="" />
-    </activity>
-
+            android:name=".DetalhesProdutosActivity"
+            android:exported="false"
+            android:label="Dados"
+            android:parentActivityName=".ListaProdutos">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".MainActivity"
             android:exported="true"

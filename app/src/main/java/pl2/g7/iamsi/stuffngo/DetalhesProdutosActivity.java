@@ -25,7 +25,7 @@ public class DetalhesProdutosActivity extends AppCompatActivity {
         Image = findViewById(R.id.ImageDetalhes);
 
         int id = getIntent().getIntExtra(IDPRODUTO, 0);
-        produto = SingletonProdutos.getInstance().getProduto(id);
+        produto = Singleton.getInstance().getProduto(id);
 
         if(produto != null) {
 

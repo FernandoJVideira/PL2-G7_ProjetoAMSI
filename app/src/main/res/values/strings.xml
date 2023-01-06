@@ -4,9 +4,10 @@
     <string name="app_name">StuffNGo</string>
     <string name="act_livro">Detalhes: %1$s</string>
     <string name="home">Home</string>
-    <string name="copoes">Copoes</string>
     <string name="qr">QR</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="settings">Settings</string>
+    <string name="tira_senha">Tira Senha Secção: %1$s</string>
+    <string name="seccao_senhas">Senhas Digitais</string>
 </resources>

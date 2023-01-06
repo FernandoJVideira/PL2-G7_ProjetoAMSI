@@ -1,4 +1,4 @@
-package pl2.g7.iamsi.stuffngo;
+package pl2.g7.iamsi.stuffngo.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+
+import pl2.g7.iamsi.stuffngo.Produtos;
+import pl2.g7.iamsi.stuffngo.R;
 
 public class ListaProdutosAdapter extends BaseAdapter {
     Context context;
