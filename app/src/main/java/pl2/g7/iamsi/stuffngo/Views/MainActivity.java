@@ -8,6 +8,9 @@ import pl2.g7.iamsi.stuffngo.R;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static String TOKEN;
+    public static String EMAIL;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

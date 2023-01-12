@@ -8,15 +8,13 @@ import org.json.JSONObject;
 
 public class AppJsonParser {
 
-    public static String parserJsonLogin(String response) {
+    public static String parserJsonLogin(JSONObject response) {
 
         String token = null;
 
         try{
-            JSONObject login = new JSONObject(response);
-
-            if(login.has("auth_key")){
-                token = login.getString("auth_key");
+            if(response.has("token")){
+                token = response.getString("token");
             }
         }
         catch (Exception e){

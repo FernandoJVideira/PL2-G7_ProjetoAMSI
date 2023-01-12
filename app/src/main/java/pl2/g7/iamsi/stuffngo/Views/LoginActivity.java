@@ -53,12 +53,14 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
     }
 
     @Override
-    public void onValidateLogin(String token, String email) {
-
+    public void onValidateLogin(String token) {
         System.out.println("Token: " + token);
-        //Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        //intent.putExtra(MenuMainActivity.TOKEN, token);
-        //intent.putExtra(MenuMainActivity.EMAIL, email);
-        //startActivity(intent);
+        if (token != null) {
+            MainActivity.TOKEN = token;
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "Email ou Password Inválidos", Toast.LENGTH_SHORT).show();
+        }
     }
 }
