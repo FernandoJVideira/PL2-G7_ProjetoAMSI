@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/search_icon"
+        android:icon="@drawable/ic_search_white_foreground"
+        android:title="@string/carrinho_nav"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/carrinho_icon"
+        android:icon="@drawable/ic_carrinho_white_foreground"
+        android:title="@string/carrinho_nav"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/dropdown"
+        android:title="Encomendas"
+        app:showAsAction="never" />
+
+
+</menu>

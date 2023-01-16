@@ -4,16 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="60px"
-    android:layout_marginTop="150px"
-    android:layout_marginRight="60px"
+    android:background="#19B6B628"
     android:orientation="vertical"
+    android:paddingLeft="60px"
+    android:paddingTop="150px"
+    android:paddingRight="60px"
     tools:context=".DetalhesSeccaoActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="327dp"
-        android:background="#2D000000"
+        android:background="#19B6B628"
         android:orientation="vertical">
 
         <TextView
@@ -65,8 +66,10 @@
 
         <Button
             android:id="@+id/btTirarSenha"
+            style="@style/Widget.AppCompat.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#BD9017"
             android:text="Tirar Senha" />
     </LinearLayout>
 

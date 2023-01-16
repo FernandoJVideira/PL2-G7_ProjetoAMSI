@@ -8,5 +8,5 @@
         android:id="@+id/lvProdutos"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#48131313" />
+        android:background="#0A131313" />
 </LinearLayout>

@@ -3,6 +3,7 @@ package pl2.g7.iamsi.stuffngo;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -32,13 +33,14 @@ public class DetalhesSeccaoActivity extends AppCompatActivity {
         tvNomeSeccao = findViewById(R.id.tvSeccaoNome);
         tvNumeroSenhaAtual = findViewById(R.id.tvNumeroSenhaAtual);
         btnTirarSenha = findViewById(R.id.btTirarSenha);
-
+        btnTirarSenha.setBackgroundColor(Color.parseColor("#BD9017"));
         if(seccao != null){
             carregarSeccao();
         }
 
     }
     private void carregarSeccao() {
+
         Resources res = getResources();
         String title = String.format(getString(R.string.tira_senha), seccao.getNome());
         setTitle(title);
@@ -58,12 +60,7 @@ public class DetalhesSeccaoActivity extends AppCompatActivity {
                                 startActivity(intent);
                                 finish();
 
-                                Toast.makeText(DetalhesSeccaoActivity.this, " A sua Senha " +
-                                        "("+ (senhaDigital.getNumeroAtual()+1) + ") " +
-                                        "foi Tirada com sucesso \n " +
-                                        "                   Aguarde a sua vez ",
-                                        Toast.LENGTH_SHORT).show();
-
+                                Toast.makeText(DetalhesSeccaoActivity.this, " A sua Senha " +"("+ (senhaDigital.getNumeroAtual()+1) + ") " + "foi Tirada com sucesso \n " + "                   Aguarde a sua vez ", Toast.LENGTH_SHORT).show();
                                 //Colocar a aumentar a o numero da senha Atual;
                             }
                         })

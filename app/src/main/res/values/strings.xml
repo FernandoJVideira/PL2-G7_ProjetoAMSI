@@ -10,4 +10,5 @@
     <string name="settings">Settings</string>
     <string name="tira_senha">Tira Senha Secção: %1$s</string>
     <string name="seccao_senhas">Senhas Digitais</string>
+    <string name="carrinho_nav">carrinho</string>
 </resources>
