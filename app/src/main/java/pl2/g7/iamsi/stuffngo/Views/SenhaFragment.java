@@ -1,4 +1,4 @@
-package pl2.g7.iamsi.stuffngo;
+package pl2.g7.iamsi.stuffngo.Views;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +14,9 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import pl2.g7.iamsi.stuffngo.Adapters.ListaSeccaoAdapter;
+import pl2.g7.iamsi.stuffngo.Models.Seccao;
+import pl2.g7.iamsi.stuffngo.Models.Singleton;
+import pl2.g7.iamsi.stuffngo.R;
 
 public class SenhaFragment extends Fragment {
     ListView lvSeccao;
@@ -34,7 +37,7 @@ public class SenhaFragment extends Fragment {
 
         lvSeccao = view.findViewById(R.id.ListViewSeccao);
 
-        seccao = Singleton.getInstance().getSeccoes();
+        seccao = Singleton.getInstance(getContext()).getSeccoes();
 
         lvSeccao.setAdapter(new ListaSeccaoAdapter(getContext(),seccao));
 

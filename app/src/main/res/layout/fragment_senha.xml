@@ -6,7 +6,7 @@
 
     android:background="#19B6B628"
     android:padding="30px"
-    tools:context=".SenhaFragment">
+    tools:context=".Views.SenhaFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

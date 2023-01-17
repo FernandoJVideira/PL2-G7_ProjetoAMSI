@@ -1,4 +1,4 @@
-package pl2.g7.iamsi.stuffngo;
+package pl2.g7.iamsi.stuffngo.Views;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+
+import pl2.g7.iamsi.stuffngo.R;
 
 public class QrFragment extends Fragment {
     private Button btnqr;

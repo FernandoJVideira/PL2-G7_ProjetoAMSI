@@ -1,4 +1,4 @@
-package pl2.g7.iamsi.stuffngo;
+package pl2.g7.iamsi.stuffngo.Views;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +12,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import pl2.g7.iamsi.stuffngo.R;
+import pl2.g7.iamsi.stuffngo.Views.HomeFragment;
+import pl2.g7.iamsi.stuffngo.Views.QrFragment;
+import pl2.g7.iamsi.stuffngo.Views.SenhaFragment;
+import pl2.g7.iamsi.stuffngo.Views.SettingsFragment;
 import pl2.g7.iamsi.stuffngo.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
@@ -80,15 +85,8 @@ public class MainActivity extends AppCompatActivity {
     public void replaceFragment(Fragment fragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame_layout,fragment);
+        fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.commit();
     }
-
-    //Era para o botao dos produtos
-
-   /*public void OnclickListaProdutos(View view){
-       Intent intent = new Intent(this, ListaProdutos.class);
-       startActivity(intent);
-   };*/
 
 }

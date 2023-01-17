@@ -9,7 +9,7 @@
     android:paddingLeft="60px"
     android:paddingTop="150px"
     android:paddingRight="60px"
-    tools:context=".DetalhesSeccaoActivity">
+    tools:context=".Views.DetalhesSeccaoActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

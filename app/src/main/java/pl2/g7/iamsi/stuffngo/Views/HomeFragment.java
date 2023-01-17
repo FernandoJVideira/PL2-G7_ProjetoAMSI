@@ -1,4 +1,4 @@
-    package pl2.g7.iamsi.stuffngo;
+    package pl2.g7.iamsi.stuffngo.Views;
 
     import android.content.Intent;
     import android.os.Bundle;
@@ -10,14 +10,23 @@
     import android.view.ViewGroup;
     import android.widget.AdapterView;
     import android.widget.ListView;
+    import android.widget.SearchView;
+
+    import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
     import java.util.ArrayList;
 
     import pl2.g7.iamsi.stuffngo.Adapters.ListaProdutosAdapter;
+    import pl2.g7.iamsi.stuffngo.Listeners.ProdutosListener;
+    import pl2.g7.iamsi.stuffngo.Models.Produto;
+    import pl2.g7.iamsi.stuffngo.R;
+    import pl2.g7.iamsi.stuffngo.Models.Singleton;
 
-    public class HomeFragment extends Fragment {
+    public class HomeFragment extends Fragment implements ProdutosListener {
         ListView lvProdutos;
-        ArrayList<Produtos> produtos;
+        private FloatingActionButton fabLista;
+        private SearchView searchView;
+        public static final int DETALHES = 1;
 
         public HomeFragment() {
             // Required empty public constructor
@@ -28,12 +37,11 @@
                                  Bundle savedInstanceState) {
             // Inflate the layout for this fragment
             View view = inflater.inflate(R.layout.fragment_home, container, false);;
+            setHasOptionsMenu(true);
 
             lvProdutos = view.findViewById(R.id.lvProdutos);
-
-            produtos = Singleton.getInstance().getProdutos();
-
-            lvProdutos.setAdapter(new ListaProdutosAdapter(getContext(), produtos));
+            Singleton.getInstance(getContext()).setProdutosListener(this);
+            Singleton.getInstance(getContext()).getAllProdutosAPI(getContext());
 
             lvProdutos.setOnItemClickListener(new AdapterView.OnItemClickListener() { //Ao clique vai para a vista de Detalhes
                 @Override
@@ -45,5 +53,12 @@
                 }
             });
             return view;
+        }
+
+        @Override
+        public void onRefreshListaProdutos(ArrayList<Produto> produtos) {
+            if (!produtos.isEmpty()) {
+                lvProdutos.setAdapter(new ListaProdutosAdapter(getContext(), produtos));
+            }
         }
     }

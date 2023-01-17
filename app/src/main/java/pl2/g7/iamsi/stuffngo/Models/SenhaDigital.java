@@ -1,4 +1,4 @@
-package pl2.g7.iamsi.stuffngo;
+package pl2.g7.iamsi.stuffngo.Models;
 
 public class SenhaDigital {
     private int id, id_seccao,NumeroAtual, UltimoNumero;

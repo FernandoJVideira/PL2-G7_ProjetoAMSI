@@ -1,4 +1,4 @@
-package pl2.g7.iamsi.stuffngo;
+package pl2.g7.iamsi.stuffngo.Views;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,8 +7,14 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
+import pl2.g7.iamsi.stuffngo.Models.Produto;
+import pl2.g7.iamsi.stuffngo.R;
+import pl2.g7.iamsi.stuffngo.Models.Singleton;
+
 public class DetalhesProdutosActivity extends AppCompatActivity {
-    private Produtos produto;
+    private Produto produto;
     public static final String IDPRODUTO = "IDPRODUTO";
     private TextView tvNome;
     private TextView tvDescricao;
@@ -25,7 +31,7 @@ public class DetalhesProdutosActivity extends AppCompatActivity {
         Image = findViewById(R.id.ImageDetalhes);
 
         int id = getIntent().getIntExtra(IDPRODUTO, 0);
-        produto = Singleton.getInstance().getProduto(id);
+        produto = Singleton.getInstance(this).getProduto(id);
 
         if(produto != null) {
 
@@ -39,7 +45,8 @@ public class DetalhesProdutosActivity extends AppCompatActivity {
         setTitle(title);
         tvNome.setText(produto.getNome());
         tvDescricao.setText(produto.getDescricao());
-        tvPreco.setText(Integer.toString(produto.getPreco_unit()) + " €");
-        Image.setImageResource(produto.getImagem());
+        tvPreco.setText(Double.toString(produto.getPreco_unit()) + " €");
+        Glide.with(this).load(Singleton.URL + "/common/Images/" + produto.getImagem()).into(Image);
+
     }
 }

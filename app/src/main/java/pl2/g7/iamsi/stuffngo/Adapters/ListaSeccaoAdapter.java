@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import pl2.g7.iamsi.stuffngo.R;
-import pl2.g7.iamsi.stuffngo.Seccao;
+import pl2.g7.iamsi.stuffngo.Models.Seccao;
 
 public class ListaSeccaoAdapter extends BaseAdapter {
     Context context;

@@ -3,12 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeFragment">
+    android:background="#F4EBEB"
+    tools:context=".Views.HomeFragment">
 
     <ListView
         android:id="@+id/lvProdutos"
+        android:divider="@null"
+        android:dividerHeight="0dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#48131313" />
+        android:background="#48FBFBFB"
+        android:cacheColorHint="#FFFFFF" />
 
 </FrameLayout>

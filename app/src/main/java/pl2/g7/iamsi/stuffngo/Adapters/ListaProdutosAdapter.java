@@ -8,19 +8,23 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
-import pl2.g7.iamsi.stuffngo.Produtos;
+import pl2.g7.iamsi.stuffngo.Models.Produto;
+import pl2.g7.iamsi.stuffngo.Models.Singleton;
 import pl2.g7.iamsi.stuffngo.R;
 
 public class ListaProdutosAdapter extends BaseAdapter {
     Context context;
     LayoutInflater layoutInflater;
-    ArrayList<Produtos> produtos;
+    ArrayList<Produto> produtos;
 
-    public ListaProdutosAdapter(Context context, ArrayList<Produtos> produtos) {
+    public ListaProdutosAdapter(Context context, ArrayList<Produto> produtos) {
         this.context = context;
         this.produtos = produtos;
+        layoutInflater = LayoutInflater.from(context);
     }
 
     @Override
@@ -39,24 +43,20 @@ public class ListaProdutosAdapter extends BaseAdapter {
     }
 
 
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-        if(layoutInflater == null){
+    public View getView(int i, View view, ViewGroup viewGroup) {
+        if(layoutInflater == null)
             layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if(view == null)
+            view = layoutInflater.inflate(R.layout.item_lista_produtos, null);
+        ViewHolderLista viewHolder = (ViewHolderLista) view.getTag();
+        if(viewHolder == null) {
+            viewHolder = new ViewHolderLista(view);
+            view.setTag(viewHolder);
         }
 
-        if(convertView == null){
-            convertView = layoutInflater.inflate(R.layout.item_lista_produtos, null);
+        viewHolder.update(produtos.get(i));
 
-            ViewHolderLista viewHolder = (ViewHolderLista) convertView.getTag();
-            if(viewHolder == null){
-                viewHolder = new ViewHolderLista(convertView);
-                convertView.setTag(viewHolder);
-            }
-
-            viewHolder.update(produtos.get(position));
-        }
-        return convertView;
+        return view;
     }
 
     private class ViewHolderLista
@@ -70,10 +70,10 @@ public class ListaProdutosAdapter extends BaseAdapter {
             imgCapa = view.findViewById(R.id.imageView);
         }
 
-        public void update(Produtos produtos){
+        public void update(Produto produtos){
             tvNome.setText(produtos.getNome());
-            tvPreco.setText(produtos.getPreco_unit()+"€");
-            imgCapa.setImageResource(produtos.getImagem());
+            tvPreco.setText(String.format("%s€", produtos.getPreco_unit()));
+            Glide.with(context).load(Singleton.URL + "/common/Images/" + produtos.getImagem()).into(imgCapa);
         }
     }
 }

@@ -1,4 +1,4 @@
-package pl2.g7.iamsi.stuffngo;
+package pl2.g7.iamsi.stuffngo.Views;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,9 +13,14 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import pl2.g7.iamsi.stuffngo.Models.Seccao;
+import pl2.g7.iamsi.stuffngo.Models.SenhaDigital;
+import pl2.g7.iamsi.stuffngo.R;
+import pl2.g7.iamsi.stuffngo.Models.Singleton;
+
 public class DetalhesSeccaoActivity extends AppCompatActivity {
     private Seccao seccao;
-    private  SenhaDigital senhaDigital;
+    private SenhaDigital senhaDigital;
     public static final String IDSECCAO = "IDSECCAO";
     private TextView tvNomeSeccao;
     private TextView tvNumeroSenhaAtual;
@@ -27,8 +32,8 @@ public class DetalhesSeccaoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detalhes_seccao);
 
         int id = getIntent().getIntExtra(IDSECCAO, 0);
-        seccao = Singleton.getInstance().getSeccao(id);
-        senhaDigital = Singleton.getInstance().getSenha(id);
+        seccao = Singleton.getInstance(this).getSeccao(id);
+        senhaDigital = Singleton.getInstance(this).getSenha(id);
 
         tvNomeSeccao = findViewById(R.id.tvSeccaoNome);
         tvNumeroSenhaAtual = findViewById(R.id.tvNumeroSenhaAtual);
@@ -56,7 +61,7 @@ public class DetalhesSeccaoActivity extends AppCompatActivity {
                         .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                 startActivity(intent);
                                 finish();
 
