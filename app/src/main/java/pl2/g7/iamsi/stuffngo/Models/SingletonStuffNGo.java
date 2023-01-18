@@ -51,7 +51,12 @@ public class SingletonStuffNGo {
         this.loginListener = loginListener;
     }
 
-    public void loginAPI(final String username, final String password){
+    public void loginAPI(final String username, final String password,  final Context context) {
+        if(!AppJsonParser.isConnectionInternet(context))
+        {
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
+            return;
+        }
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, UrlAPILogin, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -64,6 +69,7 @@ public class SingletonStuffNGo {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Toast.makeText(context, "Falha ao tentar aceder ao servidor", Toast.LENGTH_SHORT).show();
                 System.out.println(error.getMessage());
             }
         }){

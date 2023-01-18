@@ -35,7 +35,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
             Toast.makeText(this, "Email ou Password Inválidos", Toast.LENGTH_SHORT).show();
             return;
         }
-        SingletonStuffNGo.getInstance(this).loginAPI(etUname.getText().toString(), etPassword.getText().toString());
+        SingletonStuffNGo.getInstance(this).loginAPI(etUname.getText().toString(), etPassword.getText().toString(), this);
     }
 
     public boolean isUsernameValido(EditText etMail) {
@@ -59,6 +59,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
             MainActivity.TOKEN = token;
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
+            finish();
         } else {
             Toast.makeText(this, "Email ou Password Inválidos", Toast.LENGTH_SHORT).show();
         }
