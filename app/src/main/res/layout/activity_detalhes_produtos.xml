@@ -1,94 +1,105 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Views.DetalhesProdutosActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/ImageDetalhes"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scaleType="centerInside" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="312dp"
-            android:layout_margin="30px">
-
-            <LinearLayout
-                android:layout_width="144dp"
-                android:layout_height="match_parent"
-                android:layout_margin="20px"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tvNomeDetalhes"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="100px"
-                    android:layout_marginTop="10px"
-                    android:paddingTop="40px"
-                    android:text="hello"
-                    android:textAlignment="viewStart"
-                    tools:layout_editor_absoluteX="193dp"
-                    tools:layout_editor_absoluteY="356dp" />
-
-                <ImageView
-                    android:id="@+id/ImageDetalhes"
-                    android:layout_width="match_parent"
-                    android:layout_height="247dp"
-                    tools:srcCompat="@tools:sample/avatars" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="204dp"
-                android:layout_height="295dp"
-                android:layout_marginLeft="100px"
-                android:layout_marginTop="70px"
-                android:layout_marginRight="30px"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Descrição :" />
-
-                <TextView
-                    android:id="@+id/tvDescricao"
-                    android:layout_width="match_parent"
-                    android:layout_height="183dp"
-                    android:text="descricao ." />
-
-                <TextView
-                    android:id="@+id/tvPrecoDetalhes"
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:text="TextView" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="59dp"
-            android:orientation="vertical"
-            android:paddingLeft="40px"
-            android:paddingTop="10px"
-            android:paddingRight="40px"
-            android:paddingBottom="10px">
-
-            <Button
-                android:id="@+id/btnAdicionarCarrinho"
-                android:layout_width="381dp"
-                android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tvNomeDetalhes"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Adicionar ao Carrinho" />
+                android:layout_gravity="start"
+                android:text="Product Name"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/btFav"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/ic_fav_n" />
         </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/tvPrecoDetalhes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="$9.99"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/tvDescricao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Product Description"
+            android:textSize="16sp" />
 
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="60"
+            android:gravity="center"
+            android:paddingStart="50dp"
+            android:orientation="horizontal">
 
-</LinearLayout>
+            <ImageButton
+                android:id="@+id/btMinus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_minus"
+                />
+
+            <EditText
+                android:id="@+id/etQuantidade"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:text="1"
+                android:textAlignment="center"
+                android:ems="10"
+                android:inputType="number" />
+
+            <ImageButton
+                android:id="@+id/btPlus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_plus"
+                />
+
+        </LinearLayout>
+        <ImageButton
+            android:id="@+id/btCart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/ic_cart"
+            />
+
+    </LinearLayout>
+    </LinearLayout>

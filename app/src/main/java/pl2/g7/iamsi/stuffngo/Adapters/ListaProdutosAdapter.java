@@ -5,25 +5,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import java.util.ArrayList;
+import java.util.ArrayList;import java.util.HashMap;
+import java.util.Map;
 
+import pl2.g7.iamsi.stuffngo.Models.Favorito;
 import pl2.g7.iamsi.stuffngo.Models.Produto;
 import pl2.g7.iamsi.stuffngo.Models.Singleton;
 import pl2.g7.iamsi.stuffngo.R;
+import pl2.g7.iamsi.stuffngo.Views.HomeFragment;
 
 public class ListaProdutosAdapter extends BaseAdapter {
     Context context;
     LayoutInflater layoutInflater;
     ArrayList<Produto> produtos;
+    HomeFragment homeFragment;
 
-    public ListaProdutosAdapter(Context context, ArrayList<Produto> produtos) {
+    public ListaProdutosAdapter(Context context, ArrayList<Produto> produtos, HomeFragment homeFragment) {
         this.context = context;
         this.produtos = produtos;
+        this.homeFragment = homeFragment;
         layoutInflater = LayoutInflater.from(context);
     }
 
@@ -56,6 +62,18 @@ public class ListaProdutosAdapter extends BaseAdapter {
 
         viewHolder.update(produtos.get(i));
 
+        ImageButton CartButton = view.findViewById(R.id.btCart);
+        CartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Handle the button click here
+                // You can access the product at the current position with getItem(position)
+                Produto produto = (Produto) getItem(i);
+                // Do something with the product, for example add it to a cart
+                System.out.println("Produto adicionado ao carrinho: " + produto.getNome());
+            }
+        });
+
         return view;
     }
 
@@ -64,10 +82,13 @@ public class ListaProdutosAdapter extends BaseAdapter {
         private TextView tvNome, tvPreco;
         private ImageView imgCapa;
 
+        private ImageButton btFav, btCart;
+
         public ViewHolderLista(View view){
             tvNome = view.findViewById(R.id.tvNome);
             tvPreco = view.findViewById(R.id.tvPreco);
             imgCapa = view.findViewById(R.id.imageView);
+            btCart = view.findViewById(R.id.btCart);
         }
 
         public void update(Produto produtos){
@@ -77,3 +98,5 @@ public class ListaProdutosAdapter extends BaseAdapter {
         }
     }
 }
+
+

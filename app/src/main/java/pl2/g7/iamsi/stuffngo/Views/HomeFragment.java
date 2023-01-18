@@ -18,6 +18,7 @@
 
     import pl2.g7.iamsi.stuffngo.Adapters.ListaProdutosAdapter;
     import pl2.g7.iamsi.stuffngo.Listeners.ProdutosListener;
+    import pl2.g7.iamsi.stuffngo.Models.Favorito;
     import pl2.g7.iamsi.stuffngo.Models.Produto;
     import pl2.g7.iamsi.stuffngo.R;
     import pl2.g7.iamsi.stuffngo.Models.Singleton;
@@ -27,7 +28,6 @@
         private FloatingActionButton fabLista;
         private SearchView searchView;
         public static final int DETALHES = 1;
-
         public HomeFragment() {
             // Required empty public constructor
         }
@@ -38,27 +38,28 @@
             // Inflate the layout for this fragment
             View view = inflater.inflate(R.layout.fragment_home, container, false);;
             setHasOptionsMenu(true);
-
             lvProdutos = view.findViewById(R.id.lvProdutos);
+
             Singleton.getInstance(getContext()).setProdutosListener(this);
             Singleton.getInstance(getContext()).getAllProdutosAPI(getContext());
 
-            lvProdutos.setOnItemClickListener(new AdapterView.OnItemClickListener() { //Ao clique vai para a vista de Detalhes
+            lvProdutos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
                     Intent intent = new Intent(getContext(), DetalhesProdutosActivity.class);
                     intent.putExtra(DetalhesProdutosActivity.IDPRODUTO, (int) id);
                     startActivity(intent);
-
                 }
             });
+
             return view;
         }
 
         @Override
         public void onRefreshListaProdutos(ArrayList<Produto> produtos) {
             if (!produtos.isEmpty()) {
-                lvProdutos.setAdapter(new ListaProdutosAdapter(getContext(), produtos));
+                lvProdutos.setAdapter(new ListaProdutosAdapter(getContext(), produtos, this));
             }
         }
+
     }

@@ -8,12 +8,15 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import pl2.g7.iamsi.stuffngo.Listeners.FavoritosListener;
 import pl2.g7.iamsi.stuffngo.Listeners.ProdutosListener;
 import pl2.g7.iamsi.stuffngo.Utils.AppJsonParser;
 
@@ -21,16 +24,16 @@ public class Singleton {
 
         private static Singleton INSTANCE = null;
         private ArrayList<Produto> produtos;
+        private ArrayList<Favorito> favoritos;
         private ArrayList<Seccao> seccao;
-        private ProdutoBDHelper produtoBD;
+        private BDHelper bdHelper;
         private ArrayList<SenhaDigital> senhasdigitais;
         private static RequestQueue requestQueue = null;
         private ProdutosListener produtosListener;
-
-        public static final String URL = "http://192.168.137.108/PL2-G7_ProjetoPlatSI";
+        private FavoritosListener favoritosListener;
+        public static final String URL = "http://10.0.2.2/PL2-G7_ProjetoPlatSI";
         private static final String URL_API = URL + "/backend/web/api";
-
-        private static final String TOKEN = "auth_key";
+        private static final String TOKEN = "?auth_key=EjcxGqpBhnEcyV4TPiSUjIQmTcPVLsHo";
 
         public static synchronized Singleton getInstance(Context context) {
             if (INSTANCE == null) {
@@ -42,8 +45,8 @@ public class Singleton {
 
         private Singleton(Context context){ //Constructor
             produtos = new ArrayList<>();
-            produtoBD = new ProdutoBDHelper(context);
-
+            favoritos = new ArrayList<>();
+            bdHelper = new BDHelper(context);
         }
 
         public Produto getProduto(int id){
@@ -83,6 +86,10 @@ public class Singleton {
         this.produtosListener = listener;
     }
 
+    public void setFavoritosListener(FavoritosListener listener){
+        this.favoritosListener = listener;
+    }
+
     public ArrayList<Produto> getProdutos() {
         return new ArrayList<>(produtos);
     }
@@ -102,14 +109,14 @@ public class Singleton {
     }
 
     public ArrayList<Produto> getProdutosBD() {
-        produtos = produtoBD.getAllProdutosBD();
+        produtos = bdHelper.getAllProdutosBD();
         return new ArrayList<>(produtos);
     }
 
-    public void atualizarProdutosBD(ArrayList<Produto> livros) {
-        produtoBD.removerAllProdutosBD();
+    public void atualizarProdutosBD(ArrayList<Produto> produtos) {
+        bdHelper.removerAllProdutosBD();
         for (Produto produto : produtos) {
-            produtoBD.adicionarProdutoBD(produto);
+            bdHelper.adicionarProdutoBD(produto);
         }
     }
 
@@ -133,13 +140,131 @@ public class Singleton {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(context, error.getMessage()+ "", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, "Erro na ligação ao servidor", Toast.LENGTH_LONG).show();
+                            System.out.println(error.getMessage() + "");
                         }
                     }
             );
 
             requestQueue.add(req);
         }
+    }
+
+    public void adicionarFavoritoApi(final Context context, final Produto produto){
+        if(!AppJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+            if (favoritosListener != null) {
+                favoritosListener.onRefreshListaFavoritos(getFavoritosBD());
+            }
+        }
+        else {
+            JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, URL_API + "/favorito/" + produto.getId() + TOKEN, null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    if(response.has("message"))
+                        Toast.makeText(context, response.optString("message"), Toast.LENGTH_LONG).show();
+                    else {
+                        Favorito favorito = AppJsonParser.parserJsonFavorito(response);
+                        favoritos.add(favorito);
+                        bdHelper.adicionarFavoritoBD(favorito);
+                        if (favoritosListener != null) {
+                            favoritosListener.onRefreshListaFavoritos(favoritos);
+                        }
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Erro na ligação ao servidor", Toast.LENGTH_LONG).show();
+                    System.out.println(error.getMessage() + "");
+                }
+            });
+            requestQueue.add(req);
+        }
+    }
+
+    public void getAllFavoritosAPI(final Context context){
+        if(!AppJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+            if (favoritosListener != null) {
+                favoritosListener.onRefreshListaFavoritos(getFavoritosBD());
+            }
+        }
+        else {
+            JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, URL_API + "/favorito" + TOKEN, null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    favoritos = AppJsonParser.parserJsonFavoritos(response);
+                    atualizarFavoritosBD(favoritos);
+                    if (favoritosListener != null) {
+                        favoritosListener.onRefreshListaFavoritos(favoritos);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Erro na ligação ao servidor", Toast.LENGTH_LONG).show();
+                    System.out.println(error.getMessage() + "");
+                }
+            });
+            requestQueue.add(req);
+        }
+    }
+
+    public ArrayList<Favorito> getFavoritosBD() {
+        favoritos = bdHelper.getAllFavoritosBD();
+        return new ArrayList<>(favoritos);
+    }
+
+    public void removerFavoritoApi(final Context context, final Produto produto){
+        if(!AppJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+        }
+        else {
+            JsonObjectRequest req = new JsonObjectRequest(Request.Method.DELETE, URL_API + "/favorito/" + produto.getId() + TOKEN, null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    if(response.has("message") && !response.optString("message").equals("Produto removed"))
+                        Toast.makeText(context, response.optString("message"), Toast.LENGTH_LONG).show();
+                    for (Favorito favorito : favoritos) {
+                        if(favorito.getId_produto() == produto.getId()){
+                            favoritos.remove(favorito);
+                            bdHelper.removerFavoritoBD(produto);
+                            if (favoritosListener != null) {
+                                favoritosListener.onRefreshListaFavoritos(favoritos);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Erro na ligação ao servidor", Toast.LENGTH_LONG).show();
+                    System.out.println(error.getMessage() + "");
+                }
+            });
+            requestQueue.add(req);
+        }
+    }
+
+    public boolean isFavorito(Produto produto){
+        for(Favorito favorito : favoritos){
+            if(favorito.getId_produto() == produto.getId()){
+                return true;
+            }
+        }
+        return false;
+    }
+    public void atualizarFavoritosBD(ArrayList<Favorito> favoritos) {
+        bdHelper.removerAllFavoritosBD();
+        for (Favorito favorito : favoritos) {
+            bdHelper.adicionarFavoritoBD(favorito);
+        }
+    }
+
+    public void adicionarFavoritoBD(Favorito favorito) {
+        bdHelper.adicionarFavoritoBD(favorito);
     }
 
 }

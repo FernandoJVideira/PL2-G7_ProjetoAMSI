@@ -10,12 +10,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:descendantFocusability="blocksDescendants"
+        >
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="100dp"
-            android:layout_height="100dp" />
+            android:layout_gravity="center_vertical"
+            android:layout_width="150dp"
+            android:layout_height="150dp" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -41,24 +44,13 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <ImageButton
+            android:id="@+id/btCart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <Button
-                android:id="@+id/add_to_favorites"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Fav" />
-
-            <Button
-                android:id="@+id/add_to_cart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cart" />
-
-        </LinearLayout>
+            android:layout_gravity="bottom"
+            android:src="@drawable/ic_cart"
+            />
 
     </LinearLayout>
 

@@ -21,7 +21,7 @@ import pl2.g7.iamsi.stuffngo.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 
-    ActivityMainBinding binding ;
+    private ActivityMainBinding binding ;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

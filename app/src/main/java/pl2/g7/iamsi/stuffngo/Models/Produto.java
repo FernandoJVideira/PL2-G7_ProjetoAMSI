@@ -2,7 +2,6 @@ package pl2.g7.iamsi.stuffngo.Models;
 
 public class Produto {
     private int id, id_categoria;
-
     double preco_unit;
     private String nome , descricao, imagem;
 
@@ -42,4 +41,5 @@ public class Produto {
     public String getDescricao() {
         return descricao;
     }
+
 }

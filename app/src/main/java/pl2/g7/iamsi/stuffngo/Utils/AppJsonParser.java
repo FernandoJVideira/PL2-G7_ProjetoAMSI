@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import pl2.g7.iamsi.stuffngo.Models.Favorito;
 import pl2.g7.iamsi.stuffngo.Models.Produto;
 
 public class AppJsonParser {
@@ -55,6 +56,35 @@ public class AppJsonParser {
             e.printStackTrace();
         }
         return produtos;
+    }
+
+    public static ArrayList<Favorito> parserJsonFavoritos(JSONArray response) {
+        ArrayList<Favorito> favoritos = new ArrayList<>();
+        try {
+            for (int i = 0; i < response.length(); i++) {
+                JSONObject favorito = response.optJSONObject(i);
+                int id = favorito.optInt("idFavorito");
+                int idProduto = favorito.optInt("id_produto");
+                favoritos.add(new Favorito(id, idProduto));
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return favoritos;
+    }
+
+    public static Favorito parserJsonFavorito(JSONObject response) {
+        Favorito favorito = null;
+        try {
+            int id = response.optInt("idFavorito");
+            int idProduto = response.optInt("id_produto");
+            favorito = new Favorito(id, idProduto);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return favorito;
     }
 
 }

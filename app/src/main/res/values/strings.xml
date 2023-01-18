@@ -2,7 +2,7 @@
 
 
     <string name="app_name">StuffNGo</string>
-    <string name="act_livro">Detalhes: %1$s</string>
+    <string name="act_produto">Detalhes: %1$s</string>
     <string name="home">Home</string>
     <string name="qr">QR</string>
     <!-- TODO: Remove or change this placeholder text -->
