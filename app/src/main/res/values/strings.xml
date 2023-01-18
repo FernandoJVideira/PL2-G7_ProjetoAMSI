@@ -11,4 +11,10 @@
     <string name="tira_senha">Tira Senha Secção: %1$s</string>
     <string name="seccao_senhas">Senhas Digitais</string>
     <string name="carrinho_nav">carrinho</string>
+    <string name="txt_LogScreen_SignIn">Sign In</string>
+    <string name="txt_LogScreen_Username">Username</string>
+    <string name="txt_LogScreen_Pwd">Password</string>
+    <string name="txt_LogScreen_btn">Sign In</string>
+    <string name="txt_LogScreen_ForgotPwd">Forgot Password?</string>
+    <string name="txt_LogScreen_CreateAcc">Create Account</string>
 </resources>
