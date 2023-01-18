@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,16 +14,12 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import pl2.g7.iamsi.stuffngo.R;
-import pl2.g7.iamsi.stuffngo.Views.HomeFragment;
-import pl2.g7.iamsi.stuffngo.Views.QrFragment;
-import pl2.g7.iamsi.stuffngo.Views.SenhaFragment;
-import pl2.g7.iamsi.stuffngo.Views.SettingsFragment;
 import pl2.g7.iamsi.stuffngo.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding ;
-
+    public static String TOKEN = null;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -51,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayUseLogoEnabled(true);
@@ -72,15 +68,13 @@ public class MainActivity extends AppCompatActivity {
                     replaceFragment(new QrFragment());
                     break;
                 case R.id.settings:
-                    replaceFragment(new SettingsFragment());
+                    //replaceFragment(new SettingsFragment());
+                    Intent intent = new Intent(this, LoginActivity.class);
+                    startActivity(intent);
                     break;
-
             }
-
             return true ;
         });
-
-
     }
     public void replaceFragment(Fragment fragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
