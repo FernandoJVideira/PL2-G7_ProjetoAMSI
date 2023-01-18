@@ -4,13 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import pl2.g7.iamsi.stuffngo.Listeners.LoginListener;
-import pl2.g7.iamsi.stuffngo.Models.SingletonStuffNGo;
+import pl2.g7.iamsi.stuffngo.Models.Singleton;
 import pl2.g7.iamsi.stuffngo.R;
 
 public class LoginActivity extends AppCompatActivity implements LoginListener {
@@ -26,7 +25,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
         setContentView(R.layout.activity_login);
         etUname = findViewById(R.id.etUname);
         etPassword = findViewById(R.id.etPassword);
-        SingletonStuffNGo.getInstance(this).setLoginListener(this);
+        Singleton.getInstance(this).setLoginListener(this);
     }
 
     public void onClickLogin(View view) {
@@ -35,7 +34,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
             Toast.makeText(this, "Email ou Password Inválidos", Toast.LENGTH_SHORT).show();
             return;
         }
-        SingletonStuffNGo.getInstance(this).loginAPI(etUname.getText().toString(), etPassword.getText().toString(), this);
+        Singleton.getInstance(this).loginAPI(etUname.getText().toString(), etPassword.getText().toString(), this);
     }
 
     public boolean isUsernameValido(EditText etMail) {

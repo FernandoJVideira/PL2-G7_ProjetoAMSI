@@ -1,8 +1,10 @@
 package pl2.g7.iamsi.stuffngo.Models;
 
 import android.content.Context;
+import android.os.Build;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -14,9 +16,15 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 import pl2.g7.iamsi.stuffngo.Listeners.FavoritosListener;
+import pl2.g7.iamsi.stuffngo.Listeners.LoginListener;
 import pl2.g7.iamsi.stuffngo.Listeners.ProdutosListener;
 import pl2.g7.iamsi.stuffngo.Utils.AppJsonParser;
 
@@ -29,11 +37,13 @@ public class Singleton {
         private BDHelper bdHelper;
         private ArrayList<SenhaDigital> senhasdigitais;
         private static RequestQueue requestQueue = null;
-        private ProdutosListener produtosListener;
-        private FavoritosListener favoritosListener;
+        private ProdutosListener produtosListener = null;
+        private LoginListener loginListener = null;
+        private FavoritosListener favoritosListener = null;
         public static final String URL = "http://10.0.2.2/PL2-G7_ProjetoPlatSI";
         private static final String URL_API = URL + "/backend/web/api";
         private static final String TOKEN = "?auth_key=EjcxGqpBhnEcyV4TPiSUjIQmTcPVLsHo";
+        private String token;
 
         public static synchronized Singleton getInstance(Context context) {
             if (INSTANCE == null) {
@@ -90,6 +100,10 @@ public class Singleton {
         this.favoritosListener = listener;
     }
 
+    public void setLoginListener(LoginListener loginListener) {
+        this.loginListener = loginListener;
+    }
+
     public ArrayList<Produto> getProdutos() {
         return new ArrayList<>(produtos);
     }
@@ -118,6 +132,40 @@ public class Singleton {
         for (Produto produto : produtos) {
             bdHelper.adicionarProdutoBD(produto);
         }
+    }
+
+    public void loginAPI(final String username, final String password,  final Context context) {
+        if(!AppJsonParser.isConnectionInternet(context))
+        {
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL_API + "/auth", null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                token = AppJsonParser.parserJsonLogin(response);
+
+                if (loginListener != null) {
+                    loginListener.onValidateLogin(token);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(context, "Falha ao tentar aceder ao servidor", Toast.LENGTH_SHORT).show();
+                System.out.println(error.getMessage());
+            }
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Basic " + base64Encode(username + ":" + password));
+                System.out.println("Authorization: " + base64Encode("Basic " + username + ":" + password));
+                return headers;
+            }
+        };
+
+        requestQueue.add(request);
     }
 
     public void getAllProdutosAPI(final Context context){
@@ -267,4 +315,15 @@ public class Singleton {
         bdHelper.adicionarFavoritoBD(favorito);
     }
 
+    private static String base64Encode(String value) {
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    return Base64.getEncoder()
+                            .encodeToString(value.getBytes(StandardCharsets.UTF_8.toString()));
+                }
+            } catch (UnsupportedEncodingException ex) {
+                throw new RuntimeException(ex);
+            }
+            return null;
+        }
 }
