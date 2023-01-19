@@ -164,9 +164,9 @@ public class Singleton {
             Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
         }
         else {
-            JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, URL_API + "/user" + "?auth_key=" + token,null, new Response.Listener<JSONArray>() {
+            JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, URL_API + "/user" + "?auth_key=" + token,null, new Response.Listener<JSONObject>() {
                         @Override
-                        public void onResponse(JSONArray response) {
+                        public void onResponse(JSONObject response) {
                             user = AppJsonParser.parserJsonUser(response);
                             if (user != null) {
                                 userListener.onRefreshUser(user);

@@ -59,24 +59,29 @@ public class AppJsonParser {
         return produtos;
     }
 
-    public static User parserJsonUser(JSONArray response) {
+    public static User parserJsonUser(JSONObject response) {
         User user = null;
         ArrayList<Morada> moradas = new ArrayList<>();
 
         try {
-            JSONObject userJSON = response.optJSONObject(0);
-            String nome = userJSON.getString("nome");
-            String telemovel = userJSON.optString("telemovel");
-            String nif = userJSON.optString("nif");
+            if(!response.has("dados") || !response.has("moradas"))
+            {
+                return null;
+            }
 
-            JSONObject dadosJSON = response.getJSONObject(1);
-            String username = dadosJSON.getString("username");
-            String email = dadosJSON.getString("email");
+            JSONObject dados = response.getJSONObject("dados");
+            JSONArray moradasJson = response.getJSONArray("moradas");
 
-            JSONArray moradasJSON = response.getJSONArray(2);
+            String nome = dados.getString("nome");
+            String telemovel = dados.optString("telemovel");
+            String nif = dados.optString("nif");
+            String username = dados.getString("username");
+            String email = dados.getString("email");
 
-            for (int i = 0; i < moradasJSON.length(); i++) {
-                JSONObject moradaJSON = moradasJSON.getJSONObject(i);
+            for (int i = 0; i < moradasJson.length(); i++)
+            {
+                JSONObject moradaJSON = moradasJson.getJSONObject(i);
+
                 int idMorada = moradaJSON.getInt("idMorada");
                 String rua = moradaJSON.getString("rua");
                 String cidade = moradaJSON.getString("cidade");

@@ -10,14 +10,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="15dp"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingTop="15dp">
 
         <com.mikhaellopez.circularimageview.CircularImageView
             android:layout_width="110dp"
             android:layout_height="110dp"
-            android:src="@drawable/default_profile_pic"/>
+            android:src="@drawable/default_profile_pic" />
 
         <TextView
             android:id="@+id/txtUsername"
@@ -31,8 +31,8 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/purple_500"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp"
+            android:background="@color/purple_500" />
 
     </LinearLayout>
 

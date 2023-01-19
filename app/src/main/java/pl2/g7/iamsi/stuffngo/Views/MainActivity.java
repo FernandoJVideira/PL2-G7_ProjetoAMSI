@@ -56,21 +56,21 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        LoadHomeFragment(new HomeFragment());
+        replaceFragment(new HomeFragment());
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             switch(item.getItemId()){
                 case R.id.home :
-                    LoadHomeFragment(new HomeFragment());
+                    replaceFragment(new HomeFragment());
                     break;
                 case R.id.copoes:
-                    replaceHomeFragment(new SenhaFragment());
+                    replaceFragment(new SenhaFragment());
                     break;
                 case R.id.qr:
-                    replaceHomeFragment(new QrFragment());
+                    replaceFragment(new QrFragment());
                     break;
                 case R.id.profile:
-                    replaceHomeFragment(new ProfileFragment());
+                    replaceFragment(new ProfileFragment());
                     break;
 
             }
@@ -81,18 +81,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void LoadHomeFragment(Fragment fragment){
+    public void replaceFragment(Fragment fragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, fragment);
-        fragmentTransaction.commit();
-    }
-
-    public void replaceHomeFragment(Fragment fragment){
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame_layout, fragment);
-        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 
