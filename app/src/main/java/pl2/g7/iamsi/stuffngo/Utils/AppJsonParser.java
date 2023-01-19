@@ -9,7 +9,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import pl2.g7.iamsi.stuffngo.Models.Morada;
 import pl2.g7.iamsi.stuffngo.Models.Produto;
+import pl2.g7.iamsi.stuffngo.Models.User;
 
 public class AppJsonParser {
 
@@ -57,4 +59,38 @@ public class AppJsonParser {
         return produtos;
     }
 
+    public static User parserJsonUser(JSONArray response) {
+        User user = null;
+        ArrayList<Morada> moradas = new ArrayList<>();
+
+        try {
+            JSONObject userJSON = response.optJSONObject(0);
+            String nome = userJSON.getString("nome");
+            String telemovel = userJSON.optString("telemovel");
+            String nif = userJSON.optString("nif");
+
+            JSONObject dadosJSON = response.getJSONObject(1);
+            String username = dadosJSON.getString("username");
+            String email = dadosJSON.getString("email");
+
+            JSONArray moradasJSON = response.getJSONArray(2);
+
+            for (int i = 0; i < moradasJSON.length(); i++) {
+                JSONObject moradaJSON = moradasJSON.getJSONObject(i);
+                int idMorada = moradaJSON.getInt("idMorada");
+                String rua = moradaJSON.getString("rua");
+                String cidade = moradaJSON.getString("cidade");
+                String codigoPostal = moradaJSON.getString("cod_postal");
+                String pais = moradaJSON.getString("pais");
+
+                moradas.add(new Morada(idMorada, rua, cidade, codigoPostal, pais));
+            }
+
+            user = new User(username, nome, email, nif, telemovel, moradas);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
 }

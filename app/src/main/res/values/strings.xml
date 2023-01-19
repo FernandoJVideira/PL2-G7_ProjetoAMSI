@@ -11,4 +11,19 @@
     <string name="tira_senha">Tira Senha Secção: %1$s</string>
     <string name="seccao_senhas">Senhas Digitais</string>
     <string name="carrinho_nav">carrinho</string>
+    <string name="profile">Perfil</string>
+    <string name="profile_picture">Profile Picture</string>
+    <string name="default_username">Username</string>
+    <string name="default_email">teste@teste.pt</string>
+    <string name="edit_profile">Editar Perfil</string>
+    <string name="nome">Nome</string>
+    <string name="nif">NIF</string>
+    <string name="Tel">Tel</string>
+    <string name="email">Email</string>
+    <string name="moradas">Moradas</string>
+    <string name="editar_perfil">Editar Perfil</string>
+    <string name="alterar_password">Alterar Password</string>
+    <string name="save">Guardar</string>
+    <string name="Username">User</string>
+    <string name="cancel">Cancelar</string>
 </resources>

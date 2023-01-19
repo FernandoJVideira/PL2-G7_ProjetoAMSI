@@ -3,18 +3,24 @@ package pl2.g7.iamsi.stuffngo.Models;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import pl2.g7.iamsi.stuffngo.Listeners.ProdutosListener;
+import pl2.g7.iamsi.stuffngo.Listeners.UserListener;
 import pl2.g7.iamsi.stuffngo.Utils.AppJsonParser;
 
 public class Singleton {
@@ -22,12 +28,15 @@ public class Singleton {
         private static Singleton INSTANCE = null;
         private ArrayList<Produto> produtos;
         private ArrayList<Seccao> seccao;
+        private User user;
+        private ArrayList<Morada> moradas;
         private ProdutoBDHelper produtoBD;
         private ArrayList<SenhaDigital> senhasdigitais;
         private static RequestQueue requestQueue = null;
         private ProdutosListener produtosListener;
+        private UserListener userListener;
 
-        public static final String URL = "http://192.168.137.108/PL2-G7_ProjetoPlatSI";
+        public static final String URL = "http://10.0.2.2:8081";
         private static final String URL_API = URL + "/backend/web/api";
 
         private static final String TOKEN = "auth_key";
@@ -42,8 +51,8 @@ public class Singleton {
 
         private Singleton(Context context){ //Constructor
             produtos = new ArrayList<>();
+            moradas = new ArrayList<>();
             produtoBD = new ProdutoBDHelper(context);
-
         }
 
         public Produto getProduto(int id){
@@ -141,5 +150,82 @@ public class Singleton {
             requestQueue.add(req);
         }
     }
+
+    //region User
+
+    public void setUserListener(UserListener listener){
+        this.userListener = listener;
+    }
+
+    public User getUser() { return user; }
+
+    public void getUserDataAPI(final Context context, final String token){
+            if(!AppJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+        }
+        else {
+            JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, URL_API + "/user" + "?auth_key=" + token,null, new Response.Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            user = AppJsonParser.parserJsonUser(response);
+                            if (user != null) {
+                                userListener.onRefreshUser(user);
+                            }
+                        }},
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(context, error.getMessage()+ "", Toast.LENGTH_LONG).show();
+                        }
+                    }
+            );
+
+            requestQueue.add(req);
+        }
+    }
+
+    public void editarDadosAPI(final User user, final Context context, final String token){
+
+        if(!AppJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
+        }else{
+
+            Map<String, String> params = new HashMap<>();
+            params.put("token", token);
+            params.put("nome", user.getNome());
+            params.put("nif", user.getNif());
+            params.put("telemovel", user.getTelemovel());
+            params.put("email", user.getEmail());
+            params.put("username", user.getUsername());
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, URL_API + "/user/utilizador" + "?auth_key=" + token, new JSONObject(params),new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+
+                    Toast.makeText(context, "Utilizador editado com sucesso", Toast.LENGTH_SHORT).show();
+
+                    if(userListener != null){
+                        userListener.onRefreshUser(user);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    //Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                    System.out.println(error.getMessage());
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json; charset=utf-8");
+                    return headers;
+                }
+            };
+            requestQueue.add(request);
+        }
+    }
+
+    //endregion
 
 }

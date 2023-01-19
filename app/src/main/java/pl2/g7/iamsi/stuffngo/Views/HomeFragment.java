@@ -49,7 +49,6 @@
                     Intent intent = new Intent(getContext(), DetalhesProdutosActivity.class);
                     intent.putExtra(DetalhesProdutosActivity.IDPRODUTO, (int) id);
                     startActivity(intent);
-
                 }
             });
             return view;
