@@ -2,6 +2,7 @@ package pl2.g7.iamsi.stuffngo.Views;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -13,60 +14,77 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+
+import java.util.ArrayList;
+
+import pl2.g7.iamsi.stuffngo.Listeners.SenhaListener;
 import pl2.g7.iamsi.stuffngo.Models.Seccao;
-import pl2.g7.iamsi.stuffngo.Models.SenhaDigital;
 import pl2.g7.iamsi.stuffngo.R;
 import pl2.g7.iamsi.stuffngo.Models.Singleton;
 
-public class DetalhesSeccaoActivity extends AppCompatActivity {
+public class DetalhesSeccaoActivity extends AppCompatActivity implements SenhaListener {
     private Seccao seccao;
-    private SenhaDigital senhaDigital;
-    public static final String IDSECCAO = "IDSECCAO";
+    public static final String SECCAO = "SECCAO";
     private TextView tvNomeSeccao;
     private TextView tvNumeroSenhaAtual;
     private Button btnTirarSenha;
+    private TextView tvTextoSenhaAtual, tvSenha;
+    private int id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalhes_seccao);
-
-        int id = getIntent().getIntExtra(IDSECCAO, 0);
+        id = getIntent().getIntExtra(SECCAO, 0);
+        Singleton.getInstance(this).setSenhaListener(this);
         seccao = Singleton.getInstance(this).getSeccao(id);
-        senhaDigital = Singleton.getInstance(this).getSenha(id);
-
         tvNomeSeccao = findViewById(R.id.tvSeccaoNome);
         tvNumeroSenhaAtual = findViewById(R.id.tvNumeroSenhaAtual);
         btnTirarSenha = findViewById(R.id.btTirarSenha);
+        tvTextoSenhaAtual = findViewById(R.id.tvTextoSenhaAtual);
+        tvSenha = findViewById(R.id.tvSenha);
         btnTirarSenha.setBackgroundColor(Color.parseColor("#BD9017"));
+        SharedPreferences sharedInfoUser = getSharedPreferences(Singleton.getInstance(getApplicationContext()).getUSERNAME(), MODE_PRIVATE);
+        if(sharedInfoUser.getString("seccao_" + seccao.getId(), null) != null){
+            String senha = sharedInfoUser.getString("seccao_" + seccao.getId(), null);
+            tvSenha.setText(senha);
+            tvSenha.setVisibility(View.VISIBLE);
+            tvTextoSenhaAtual.setVisibility(View.VISIBLE);
+        }
         if(seccao != null){
             carregarSeccao();
         }
 
     }
     private void carregarSeccao() {
-
-        Resources res = getResources();
         String title = String.format(getString(R.string.tira_senha), seccao.getNome());
         setTitle(title);
         tvNomeSeccao.setText(seccao.getNome());
-        tvNumeroSenhaAtual.setText(senhaDigital.getNumeroAtual()+"");
+        tvNumeroSenhaAtual.setText(String.format("%d", seccao.getNumeroActual()));
         btnTirarSenha.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 AlertDialog.Builder builder = new AlertDialog.Builder(DetalhesSeccaoActivity.this);
-                builder.setTitle("Tem a certeza ?")
-                        .setMessage("Sua Senha: "+ (senhaDigital.getNumeroAtual()+1))
+                builder.setTitle(seccao.getNome())
+                        .setMessage(String.format("Deseja tirar senha para %s?", seccao.getNome()))
                         .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                startActivity(intent);
-                                finish();
-
-                                Toast.makeText(DetalhesSeccaoActivity.this, " A sua Senha " +"("+ (senhaDigital.getNumeroAtual()+1) + ") " + "foi Tirada com sucesso \n " + "                   Aguarde a sua vez ", Toast.LENGTH_SHORT).show();
-                                //Colocar a aumentar a o numero da senha Atual;
+                                Singleton.getInstance(getApplicationContext()).getSenhaDigitalAPI(id);
+                                try {
+                                    Singleton.getInstance(getApplicationContext()).mqttClient.subscribe("seccao_" + id, 0);
+                                } catch (MqttException e) {
+                                    throw new RuntimeException(e);
+                                }
                             }
                         })
                         .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -74,18 +92,30 @@ public class DetalhesSeccaoActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 // do nothing
                             }
-                        })
-
-                        .show();
-
+                        }).show();
             }
         });
+    }
 
-        };
-
-
-
-
-
+    @Override
+    public void onRefreshSenha(String number, String numeroActual) {
+        SharedPreferences sharedInfoUser = getSharedPreferences(Singleton.getInstance(getApplicationContext()).getUSERNAME(), MODE_PRIVATE);
+        if(number != null){
+            SharedPreferences.Editor editor = sharedInfoUser.edit();
+            editor.putString("seccao_" + seccao.getId(), number);
+            editor.apply();
+            tvSenha.setText(number);
+            tvSenha.setVisibility(View.VISIBLE);
+            tvTextoSenhaAtual.setVisibility(View.VISIBLE);
+        }
+        if(numeroActual != null){
+            if(numeroActual.equals(sharedInfoUser.getString("seccao_" + seccao.getId(), null)))
+            Singleton.getInstance(this).createNotification(this,
+                    "StuffNgo - Senha Digital",
+                    "Senha actual :" + numeroActual,
+                    "Estamos a chamar a sua senha!");
+            tvNumeroSenhaAtual.setText(numeroActual);
+        }
+    }
 }
 

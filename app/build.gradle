@@ -1,7 +1,16 @@
 plugins {
     id 'com.android.application'
 }
-
+allprojects {
+    repositories {
+        maven { url "https://jitpack.io" }
+        maven {
+            url "https://repo.eclipse.org/content/repositories/paho-snapshots/"
+        }
+        google()
+        mavenCentral()
+    }
+}
 android {
     namespace 'pl2.g7.iamsi.stuffngo'
     compileSdk 32
@@ -36,7 +45,6 @@ android {
 
 
 dependencies {
-
     implementation 'com.android.volley:volley:1.2.1'
     implementation 'com.github.bumptech.glide:glide:4.10.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'
@@ -48,4 +56,7 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    implementation 'com.github.arcadefire:nice-spinner:1.4.4'
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0'
+    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
 }

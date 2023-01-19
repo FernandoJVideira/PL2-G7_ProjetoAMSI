@@ -3,23 +3,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     android:background="#19B6B628"
-    android:padding="30px"
+    android:padding="10dp"
     tools:context=".Views.SenhaFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="30px">
+        android:padding="30dp">
+
+        <org.angmarch.views.NiceSpinner
+            android:id="@+id/nice_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            android:text="Selecione a loja"
+            />
 
         <TextView
             android:id="@+id/textView2"
             android:layout_width="265dp"
             android:layout_height="52dp"
-            android:layout_marginLeft="150px"
-            android:layout_marginTop="100px"
+            android:layout_gravity="center"
             android:text="Selecione a seccao para a qual pretende tirar a senha :"
             android:textColor="#070707"
             android:textSize="20sp" />

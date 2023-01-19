@@ -17,7 +17,6 @@ public class ListaSeccaoAdapter extends BaseAdapter {
     LayoutInflater layoutInflater;
     ArrayList<Seccao> seccoes;
 
-
     public ListaSeccaoAdapter(Context context, ArrayList<Seccao> seccoes){
         this.context = context;
         this.seccoes = seccoes;
@@ -61,7 +60,6 @@ public class ListaSeccaoAdapter extends BaseAdapter {
     private class ViewHolderLista
     {
         private TextView tvNome;
-
 
         public ViewHolderLista(View view){
             tvNome = view.findViewById(R.id.tvNomeSeccao);

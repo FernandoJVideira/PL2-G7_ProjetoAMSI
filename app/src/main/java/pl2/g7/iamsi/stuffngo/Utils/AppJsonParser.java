@@ -10,7 +10,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import pl2.g7.iamsi.stuffngo.Models.Favorito;
+import pl2.g7.iamsi.stuffngo.Models.Loja;
 import pl2.g7.iamsi.stuffngo.Models.Produto;
+import pl2.g7.iamsi.stuffngo.Models.Seccao;
 
 public class AppJsonParser {
 
@@ -36,6 +38,22 @@ public class AppJsonParser {
         NetworkInfo ni = cm.getActiveNetworkInfo();
 
         return ni != null && ni.isConnected();
+    }
+
+    public static String parserJsonSenhaDigital(JSONObject response) {
+
+        String number = null;
+
+        try{
+            if(response.has("number")){
+                number = response.getString("number");
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return number;
     }
 
     public static ArrayList<Produto> parserJsonProdutos(JSONArray response) {
@@ -87,4 +105,40 @@ public class AppJsonParser {
         return favorito;
     }
 
+    public static ArrayList<Loja> parserJsonLojas(JSONArray response){
+        ArrayList<Loja> lojas = new ArrayList<>();
+        try {
+            for (int i = 0; i < response.length(); i++) {
+                JSONObject loja = response.optJSONObject(i);
+                JSONObject morada = loja.getJSONObject("morada");
+                lojas.add(new Loja(
+                        loja.optInt("id"),
+                        loja.optString("descricao"),
+                        loja.optString("email"),
+                        loja.optString("telefone"),
+                        morada.getString("rua"),
+                        morada.getString("cidade"),
+                        morada.getString("cod_postal"),
+                        morada.getString("pais")));
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return lojas;
+    }
+
+    public static ArrayList<Seccao> parserJsonSeccoes(JSONArray response){
+        ArrayList<Seccao> seccoes = new ArrayList<>();
+        try {
+            for (int i = 0; i < response.length(); i++) {
+                JSONObject seccao = response.optJSONObject(i);
+                seccoes.add(new Seccao(seccao.optInt("id"), seccao.optString("nome"), seccao.optInt("numeroAtual"), seccao.optInt("ultimoNumero")));
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return seccoes;
+    }
 }

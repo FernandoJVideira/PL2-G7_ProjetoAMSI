@@ -98,13 +98,14 @@ public class BDHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         sql = "CREATE TABLE loja (" +
-                "id_loja INTEGER NOT NULL," +
-                "nome TEXT NOT NULL," +
+                "id INTEGER PRIMARY KEY," +
+                "descricao TEXT NOT NULL," +
+                "email TEXT NOT NULL," +
+                "telefone TEXT NOT NULL," +
                 "rua TEXT NOT NULL," +
                 "cidade TEXT NOT NULL," +
                 "cod_postal TEXT NOT NULL," +
-                "pais TEXT NOT NULL," +
-                "PRIMARY KEY (id_loja)" +
+                "pais TEXT NOT NULL" +
                 ")";
         db.execSQL(sql);
 
@@ -128,6 +129,22 @@ public class BDHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY ("+IDPRODUTO+") REFERENCES "+TABLE_PRODUTOS+"("+IDPRODUTO+"));";
         db.execSQL(sql);
 
+        sql = "CREATE TABLE promocao (" +
+                "id INTEGER PRIMARY KEY," +
+                "nome_promo TEXT NOT NULL," +
+                "codigo TEXT NOT NULL," +
+                "data_limite TEXT NOT NULL," +
+                "percentagem INTEGER NOT NULL" +
+                ")";
+        db.execSQL(sql);
+
+        sql = "CREATE TABLE seccao (" +
+                "id INTEGER PRIMARY KEY," +
+                "nome TEXT NOT NULL," +
+                "numeroActual INTEGER NOT NULL," +
+                "ultimoNumero INTEGER NOT NULL" +
+                ")";
+        db.execSQL(sql);
     }
 
     @Override
@@ -212,6 +229,39 @@ public class BDHelper extends SQLiteOpenHelper {
         return null;
     }
 
+    public Loja adicionarLojaBD(Loja loja){
+        ContentValues values = new ContentValues();
+        values.put("id", loja.getId());
+        values.put("descricao", loja.getDescricao());
+        values.put("email", loja.getEmail());
+        values.put("telefone", loja.getTelefone());
+        values.put(RUA, loja.getRua());
+        values.put(CIDADE, loja.getCidade());
+        values.put(COD_POSTAL, loja.getCod_postal());
+        values.put(PAIS, loja.getPais());
+
+        long id = db.insert("loja", null, values);
+        if(id >= -1) {
+            loja.setId((int) id);
+            return loja;
+        }
+        return null;
+    }
+
+    public ArrayList<Loja> getAllLojasBD(){
+        ArrayList<Loja> lojas = new ArrayList<>();
+        String sql = "SELECT * FROM loja;";
+        Cursor cursor = db.rawQuery(sql, null);
+        if(cursor.moveToFirst()){
+            do{
+                Loja loja = new Loja(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getString(7));
+                lojas.add(loja);
+            }while(cursor.moveToNext());
+            cursor.close();
+        }
+        return lojas;
+    }
+
     public ArrayList<Produto> getAllProdutosBD() {
         ArrayList<Produto> produtos = new ArrayList<>();
         Cursor cursor = db.query(TABLE_PRODUTOS, new String[]{IDPRODUTO, NOME, DESCRICAO, PRECO, IDCATEGORIA, IMAGEM}, null, null, null, null, null);
@@ -256,5 +306,4 @@ public class BDHelper extends SQLiteOpenHelper {
         }
         return favoritos;
     }
-
 }

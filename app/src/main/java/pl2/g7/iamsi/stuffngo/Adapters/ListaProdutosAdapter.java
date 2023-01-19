@@ -8,13 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
-
-import java.util.ArrayList;import java.util.HashMap;
-import java.util.Map;
-
-import pl2.g7.iamsi.stuffngo.Models.Favorito;
+import java.util.ArrayList;
 import pl2.g7.iamsi.stuffngo.Models.Produto;
 import pl2.g7.iamsi.stuffngo.Models.Singleton;
 import pl2.g7.iamsi.stuffngo.R;
@@ -38,16 +33,13 @@ public class ListaProdutosAdapter extends BaseAdapter {
         return produtos.size();
     }
 
-
     public Object getItem(int position) {
         return produtos.get(position);
     }
 
-
     public long getItemId(int position) {
         return produtos.get(position).getId();
     }
-
 
     public View getView(int i, View view, ViewGroup viewGroup) {
         if(layoutInflater == null)
@@ -81,7 +73,6 @@ public class ListaProdutosAdapter extends BaseAdapter {
     {
         private TextView tvNome, tvPreco;
         private ImageView imgCapa;
-
         private ImageButton btFav, btCart;
 
         public ViewHolderLista(View view){
