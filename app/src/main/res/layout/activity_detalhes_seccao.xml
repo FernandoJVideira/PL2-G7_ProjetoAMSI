@@ -6,9 +6,9 @@
     android:layout_height="match_parent"
     android:background="#19B6B628"
     android:orientation="vertical"
-    android:paddingLeft="60px"
-    android:paddingTop="150px"
-    android:paddingRight="60px"
+    android:paddingLeft="30dp"
+    android:paddingTop="30dp"
+    android:paddingRight="30dp"
     tools:context=".Views.DetalhesSeccaoActivity">
 
     <LinearLayout
@@ -18,26 +18,17 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/textView3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="100px"
-            android:text="Seçcão"
-            android:textAlignment="center"
-            android:textSize="34sp" />
-
-        <TextView
             android:id="@+id/tvSeccaoNome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="50px"
             android:text="XX"
             android:textAlignment="center"
-            android:textSize="80sp" />
+            android:textSize="60sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="25px"
             android:orientation="horizontal">
 
@@ -55,7 +46,24 @@
                 android:text="XX"
                 android:textAlignment="center" />
         </LinearLayout>
-
+        <TextView
+            android:id="@+id/tvTextoSenhaAtual"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:text="Sua senha"
+            android:textAlignment="center"
+            android:visibility="invisible"
+            android:textSize="30sp" />
+        <TextView
+            android:id="@+id/tvSenha"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="XX"
+            android:textAlignment="center"
+            android:visibility="invisible"
+            android:textSize="60sp" />
     </LinearLayout>
 
     <LinearLayout

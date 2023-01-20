@@ -39,10 +39,8 @@
             View view = inflater.inflate(R.layout.fragment_home, container, false);;
             setHasOptionsMenu(true);
             lvProdutos = view.findViewById(R.id.lvProdutos);
-
             Singleton.getInstance(getContext()).setProdutosListener(this);
             Singleton.getInstance(getContext()).getAllProdutosAPI(getContext());
-
             lvProdutos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
