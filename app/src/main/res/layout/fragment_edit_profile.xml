@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".Views.ProfileFragment">
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -148,6 +151,7 @@
             android:id="@+id/etNIF"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:inputType="number"
             android:layout_marginStart="25dp"
             android:textColor="@android:color/darker_gray"
             android:textSize="18sp" />
@@ -187,6 +191,7 @@
 
         <EditText
             android:id="@+id/etTel"
+            android:inputType="number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="25dp"
@@ -263,7 +268,7 @@
             android:textColor="@color/purple_500"
             android:textSize="18sp"
             android:layout_marginRight="15dp"
-            app:drawableLeftCompat="@drawable/ic_save" />
+            app:drawableLeftCompat="@drawable/ic_cancel" />
 
         <TextView
             android:id="@+id/btnSave"
@@ -277,5 +282,5 @@
             android:textSize="18sp"
             app:drawableLeftCompat="@drawable/ic_save" />
     </LinearLayout>
-
 </LinearLayout>
+</ScrollView>

@@ -58,6 +58,10 @@ public User( String username, String nome, String email, String nif, String tele
         return telemovel;
     }
 
+    public void setMoradas(ArrayList<Morada> moradas) {
+        this.moradas = moradas;
+    }
+
     public ArrayList<Morada> getMoradas() {
         return moradas;
     }

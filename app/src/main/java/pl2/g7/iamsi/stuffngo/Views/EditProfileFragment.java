@@ -89,9 +89,9 @@ public class EditProfileFragment extends Fragment implements UserListener {
                         System.out.println(user.getUsername());
 
                         Singleton.getInstance(getContext()).editarDadosAPI(user, getContext(), "w9MY9udTVVlUX_xyIjoHfG7JDt2q0ji7");
+                        getFragmentManager().popBackStack();
                     }
                 }
-                getFragmentManager().popBackStack();
             }
         });
 
@@ -119,10 +119,16 @@ public class EditProfileFragment extends Fragment implements UserListener {
             etNome.setError("Nome Invalido");
             return false;
         }
-        if (nif.length() != CHAR_NIF && !nif.matches("^[0-9]*$")) {
+        if (nif.length() != CHAR_NIF) {
             etNif.setError("Nif Inválido");
             return false;
         }
+        else if (!nif.matches("^[0-9]*$"))
+        {
+            etNif.setError("Nif Inválido");
+            return false;
+        }
+
         if ((telemovel.length() < MIN_CHAR_TELEMOVEL && !telemovel.matches("^[0-9]*$")) || telemovel.length() > MAX_CHAR_TELEMOVEL) {
             etTelemovel.setError("Telemóvel Inválido");
             return false;

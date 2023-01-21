@@ -62,7 +62,7 @@ public class ListaMoradasAdapter extends BaseAdapter {
 
         public void update(Morada morada)
         {
-            tvMorada.setText(morada.getRua() + ", " + morada.getCod_postal() + ", " + morada.getCidade() + ", " + morada.getPais());
+            tvMorada.setText(morada.getRua() + ", " + morada.getCodPostal() + ", " + morada.getCidade() + ", " + morada.getPais());
         }
     }
 }

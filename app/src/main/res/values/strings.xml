@@ -26,4 +26,15 @@
     <string name="save">Guardar</string>
     <string name="Username">User</string>
     <string name="cancel">Cancelar</string>
+    <string name="rua">Rua</string>
+    <string name="codigo_postal">Cod. Postal</string>
+    <string name="cidade">Cidade</string>
+    <string name="pais">Pais</string>
+    <string name="txtAddMorada">Adicionar Morada</string>
+    <string name="txt_succ_edit">Morada editada com sucesso!</string>
+    <string name="txt_delete">Apagar</string>
+    <string name="txtDelete">Remover Morada</string>
+    <string name="txtDeleteMsg">Tem a certeza que deseja remover esta morada?</string>
+    <string name="txt_succ_add">Morada adicionada com sucesso!</string>
+    <string name="txt_succ_delete">Morada apagada com sucesso!</string>
 </resources>

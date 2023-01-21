@@ -25,7 +25,23 @@ public class Morada {
         return cidade;
     }
 
-    public String getCod_postal() {
+    public void setRua(String rua) {
+        this.rua = rua;
+    }
+
+    public void setCidade(String cidade) {
+        this.cidade = cidade;
+    }
+
+    public void setCodPostal(String cod_postal) {
+        this.cod_postal = cod_postal;
+    }
+
+    public void setPais(String pais) {
+        this.pais = pais;
+    }
+
+    public String getCodPostal() {
         return cod_postal;
     }
 

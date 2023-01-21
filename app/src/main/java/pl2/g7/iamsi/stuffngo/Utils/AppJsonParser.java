@@ -98,4 +98,24 @@ public class AppJsonParser {
         }
         return user;
     }
+
+    public static Morada parserJsonMorada(JSONObject response) {
+        Morada morada = null;
+
+        try {
+            JSONObject moradaJSON = response.getJSONObject("morada");
+
+            int idMorada = moradaJSON.getInt("idMorada");
+            String rua = moradaJSON.getString("rua");
+            String cidade = moradaJSON.getString("cidade");
+            String codigoPostal = moradaJSON.getString("cod_postal");
+            String pais = moradaJSON.getString("pais");
+
+            morada = new Morada(idMorada, rua, cidade, codigoPostal, pais);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return morada;
+    }
 }

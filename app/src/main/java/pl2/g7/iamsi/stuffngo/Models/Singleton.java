@@ -10,6 +10,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
@@ -19,9 +20,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import pl2.g7.iamsi.stuffngo.Listeners.MoradaListener;
 import pl2.g7.iamsi.stuffngo.Listeners.ProdutosListener;
 import pl2.g7.iamsi.stuffngo.Listeners.UserListener;
 import pl2.g7.iamsi.stuffngo.Utils.AppJsonParser;
+import pl2.g7.iamsi.stuffngo.Views.MainActivity;
 
 public class Singleton {
 
@@ -29,12 +32,12 @@ public class Singleton {
         private ArrayList<Produto> produtos;
         private ArrayList<Seccao> seccao;
         private User user;
-        private ArrayList<Morada> moradas;
         private ProdutoBDHelper produtoBD;
         private ArrayList<SenhaDigital> senhasdigitais;
         private static RequestQueue requestQueue = null;
         private ProdutosListener produtosListener;
         private UserListener userListener;
+        private MoradaListener moradasListener;
 
         public static final String URL = "http://10.0.2.2:8081";
         private static final String URL_API = URL + "/backend/web/api";
@@ -51,7 +54,6 @@ public class Singleton {
 
         private Singleton(Context context){ //Constructor
             produtos = new ArrayList<>();
-            moradas = new ArrayList<>();
             produtoBD = new ProdutoBDHelper(context);
         }
 
@@ -211,8 +213,7 @@ public class Singleton {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    //Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
-                    System.out.println(error.getMessage());
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }) {
                 @Override
@@ -222,6 +223,108 @@ public class Singleton {
                     return headers;
                 }
             };
+            requestQueue.add(request);
+        }
+    }
+
+    public void setMoradaListener(MoradaListener listener){
+        this.moradasListener = listener;
+    }
+
+    public void editarMoradaAPI(final Morada morada, final Context context, final String token){
+
+        if(!AppJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
+        }else{
+
+            Map<String, String> params = new HashMap<>();
+            //params.put("token", token);
+            params.put("rua", morada.getRua());
+            params.put("cidade", morada.getCidade());
+            params.put("cod_postal", morada.getCodPostal());
+            params.put("pais", morada.getPais());
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, URL_API + "/morada/" + morada.getId() + "?auth_key=" + token, new JSONObject(params),new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+
+                    if(moradasListener != null){
+                        moradasListener.onMoradasRefresh(MainActivity.EDIT);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json; charset=utf-8");
+                    return headers;
+                }
+            };
+            requestQueue.add(request);
+        }
+    }
+
+    public void addMoradaAPI(final Morada morada, final Context context, final String token){
+
+        if(!AppJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
+        }else{
+
+            Map<String, String> params = new HashMap<>();
+            //params.put("token", token);
+            params.put("rua", morada.getRua());
+            params.put("cidade", morada.getCidade());
+            params.put("cod_postal", morada.getCodPostal());
+            params.put("pais", morada.getPais());
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL_API + "/morada" + "?auth_key=" + token, new JSONObject(params),new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    if(moradasListener != null){
+                        moradasListener.onMoradasRefresh(MainActivity.ADD);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json; charset=utf-8");
+                    return headers;
+                }
+            };
+            requestQueue.add(request);
+        }
+    }
+
+    public void removerMoradaAPI(final Morada morada, final Context context, final String token){
+        if(!AppJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
+        }else{
+            StringRequest request = new StringRequest(Request.Method.DELETE, URL_API + "/morada/" + morada.getId() + "?auth_key=" + token, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    if(moradasListener != null){
+                        moradasListener.onMoradasRefresh(MainActivity.DELETE);
+                    }
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, error.getMessage()+"", Toast.LENGTH_SHORT).show();
+                }
+            });
+
             requestQueue.add(request);
         }
     }
