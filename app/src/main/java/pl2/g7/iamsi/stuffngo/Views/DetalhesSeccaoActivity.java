@@ -53,7 +53,7 @@ public class DetalhesSeccaoActivity extends AppCompatActivity implements SenhaLi
         tvTextoSenhaAtual = findViewById(R.id.tvTextoSenhaAtual);
         tvSenha = findViewById(R.id.tvSenha);
         btnTirarSenha.setBackgroundColor(Color.parseColor("#BD9017"));
-        SharedPreferences sharedInfoUser = getSharedPreferences(Singleton.getInstance(getApplicationContext()).getUSERNAME(), MODE_PRIVATE);
+        SharedPreferences sharedInfoUser = getSharedPreferences("senhaDigital", MODE_PRIVATE);
         if(sharedInfoUser.getString("seccao_" + seccao.getId(), null) != null){
             String senha = sharedInfoUser.getString("seccao_" + seccao.getId(), null);
             tvSenha.setText(senha);
@@ -81,7 +81,7 @@ public class DetalhesSeccaoActivity extends AppCompatActivity implements SenhaLi
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Singleton.getInstance(getApplicationContext()).getSenhaDigitalAPI(id);
                                 try {
-                                    Singleton.getInstance(getApplicationContext()).mqttClient.subscribe("seccao_" + id, 0);
+                                    Singleton.getInstance(getApplicationContext()).mqttClient.subscribe("seccao_" + id, 1);
                                 } catch (MqttException e) {
                                     throw new RuntimeException(e);
                                 }
@@ -99,7 +99,7 @@ public class DetalhesSeccaoActivity extends AppCompatActivity implements SenhaLi
 
     @Override
     public void onRefreshSenha(String number, String numeroActual) {
-        SharedPreferences sharedInfoUser = getSharedPreferences(Singleton.getInstance(getApplicationContext()).getUSERNAME(), MODE_PRIVATE);
+        SharedPreferences sharedInfoUser = getSharedPreferences("senhaDigital", MODE_PRIVATE);
         if(number != null){
             SharedPreferences.Editor editor = sharedInfoUser.edit();
             editor.putString("seccao_" + seccao.getId(), number);
@@ -110,7 +110,7 @@ public class DetalhesSeccaoActivity extends AppCompatActivity implements SenhaLi
         }
         if(numeroActual != null){
             if(numeroActual.equals(sharedInfoUser.getString("seccao_" + seccao.getId(), null)))
-            Singleton.getInstance(this).createNotification(this,
+                Singleton.getInstance(this).createNotification(this,
                     "StuffNgo - Senha Digital",
                     "Senha actual :" + numeroActual,
                     "Estamos a chamar a sua senha!");

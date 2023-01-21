@@ -27,20 +27,28 @@ import org.json.JSONObject;
 
 import java.util.Map;
 
+import pl2.g7.iamsi.stuffngo.Listeners.LoginListener;
 import pl2.g7.iamsi.stuffngo.Listeners.MqttListener;
 import pl2.g7.iamsi.stuffngo.Listeners.SenhaListener;
 import pl2.g7.iamsi.stuffngo.Models.Singleton;
 import pl2.g7.iamsi.stuffngo.R;
 import pl2.g7.iamsi.stuffngo.databinding.ActivityMainBinding;
 
-public class MainActivity extends AppCompatActivity implements MqttListener {
+public class MainActivity extends AppCompatActivity implements MqttListener, LoginListener {
 
     private ActivityMainBinding binding ;
     public static String TOKEN = null;
+    public static int DEL = 1, ADD = 2, UPDATE = 3;
+    private Menu menu;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.upper_nav_menu,menu);
+        inflater.inflate(R.menu.upper_nav_menu, menu);
+        if(Singleton.getInstance(getApplicationContext()).getUSERNAME() == null){
+            menu.findItem(R.id.carrinho_icon).setVisible(false);
+            menu.findItem(R.id.dropdown).setVisible(false);
+        }
         return true;
     }
     @Override
@@ -50,7 +58,8 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
                 Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
                return true;
             case R.id.carrinho_icon:
-                Toast.makeText(this,"Carrinho", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(this, CarrinhoActivity.class);
+                    startActivity(intent);
                 return true;
             case R.id.dropdown:
                 Toast.makeText(this, "Encomendas", Toast.LENGTH_SHORT).show();
@@ -74,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
         replaceFragment(new HomeFragment());
         if(Singleton.getInstance(getApplicationContext()).mqttClient == null)
             connectMqtt();
+
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             switch(item.getItemId()){
                 case R.id.home :
@@ -144,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
             options.setConnectionTimeout(10);
             options.setKeepAliveInterval(20);
 
-            Singleton.getInstance(getApplicationContext()).mqttClient = new MqttAndroidClient(this, "tcp://188.37.63.6:1883", "Cliente");
+            Singleton.getInstance(getApplicationContext()).mqttClient = new MqttAndroidClient(this, "tcp://10.0.2.2:1883", "Cliente");
             Singleton.getInstance(getApplicationContext()).mqttClient.connect(options, null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
@@ -167,5 +177,13 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
             System.out.println("Error: " + ex.getMessage());
         }
 
+    }
+
+    @Override
+    public void onValidateLogin(String token) {
+        if(token != null){
+            menu.findItem(R.id.carrinho_icon).setVisible(true);
+            menu.findItem(R.id.dropdown).setVisible(true);
+        }
     }
 }

@@ -9,6 +9,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import java.util.ArrayList;
 import pl2.g7.iamsi.stuffngo.Models.Produto;
 import pl2.g7.iamsi.stuffngo.Models.Singleton;
@@ -54,15 +56,11 @@ public class ListaProdutosAdapter extends BaseAdapter {
 
         viewHolder.update(produtos.get(i));
 
-        ImageButton CartButton = view.findViewById(R.id.btCart);
-        CartButton.setOnClickListener(new View.OnClickListener() {
+        ImageButton cartButton = view.findViewById(R.id.btCart);
+        cartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle the button click here
-                // You can access the product at the current position with getItem(position)
-                Produto produto = (Produto) getItem(i);
-                // Do something with the product, for example add it to a cart
-                System.out.println("Produto adicionado ao carrinho: " + produto.getNome());
+                Singleton.getInstance(context).addProdutoCarrinhoApi(produtos.get(i).getId(), 1);
             }
         });
 
@@ -73,19 +71,24 @@ public class ListaProdutosAdapter extends BaseAdapter {
     {
         private TextView tvNome, tvPreco;
         private ImageView imgCapa;
-        private ImageButton btFav, btCart;
+        private ImageButton btCart;
 
         public ViewHolderLista(View view){
             tvNome = view.findViewById(R.id.tvNome);
             tvPreco = view.findViewById(R.id.tvPreco);
             imgCapa = view.findViewById(R.id.imageView);
             btCart = view.findViewById(R.id.btCart);
+            if(Singleton.getInstance(context).getUSERNAME() == null){
+                btCart.setImageAlpha(75);
+                btCart.setEnabled(false);
+            }
+
         }
 
         public void update(Produto produtos){
             tvNome.setText(produtos.getNome());
             tvPreco.setText(String.format("%s€", produtos.getPreco_unit()));
-            Glide.with(context).load(Singleton.URL + "/common/Images/" + produtos.getImagem()).into(imgCapa);
+            Glide.with(context).load(Singleton.URL + "/common/Images/" + produtos.getImagem()).diskCacheStrategy(DiskCacheStrategy.ALL).into(imgCapa);
         }
     }
 }

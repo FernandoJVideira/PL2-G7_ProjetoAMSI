@@ -9,7 +9,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import pl2.g7.iamsi.stuffngo.Models.Carrinho;
+import pl2.g7.iamsi.stuffngo.Models.Categoria;
 import pl2.g7.iamsi.stuffngo.Models.Favorito;
+import pl2.g7.iamsi.stuffngo.Models.Iva;
+import pl2.g7.iamsi.stuffngo.Models.LinhaCarrinho;
 import pl2.g7.iamsi.stuffngo.Models.Loja;
 import pl2.g7.iamsi.stuffngo.Models.Produto;
 import pl2.g7.iamsi.stuffngo.Models.Seccao;
@@ -32,7 +36,6 @@ public class AppJsonParser {
         return token;
     }
 
-
     public static boolean isConnectionInternet(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
@@ -54,6 +57,37 @@ public class AppJsonParser {
         }
 
         return number;
+    }
+
+    public static Carrinho parserJsonCarrinho(JSONObject carrinho){
+        if(carrinho.has("message"))
+            return null;
+        ArrayList<LinhaCarrinho> linhasCarrinho = new ArrayList<>();
+        try{
+            if(carrinho.has("linhascarrinho")){
+                JSONArray linhas = carrinho.getJSONArray("linhascarrinho");
+                for(int i = 0; i < linhas.length(); i++){
+                    JSONObject linha = linhas.getJSONObject(i);
+                    linhasCarrinho.add(parserJsonLinhaCarrinho(linha));
+                }
+            }
+            JSONObject cart = carrinho.getJSONObject("carrinho");
+            JSONObject dados = carrinho.getJSONObject("dados");
+            return new Carrinho(cart.getInt("idCarrinho"), cart.getString("data_criacao"), cart.optInt("id_morada", -1), cart.optInt("id_loja", -1), cart.optInt("id_promocao", -1), linhasCarrinho, false, dados.optDouble("subTotal"), dados.optDouble("iva"), dados.optDouble("desconto"), dados.optDouble("total"));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static LinhaCarrinho parserJsonLinhaCarrinho(JSONObject linha) {
+        try {
+            return new LinhaCarrinho(linha.getInt("idLinha"), linha.getInt("id_carrinho"), linha.getInt("id_produto"), linha.getInt("quantidade"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static ArrayList<Produto> parserJsonProdutos(JSONArray response) {

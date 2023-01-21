@@ -64,28 +64,13 @@ public class BDHelper extends SQLiteOpenHelper {
                 DESCRICAO + " TEXT NOT NULL, " +
                 PRECO + " DOUBLE(10,2) NOT NULL, " +
                 IDCATEGORIA + " INTEGER NOT NULL, " +
-                IMAGEM + " TEXT NOT NULL,"+
-                "FOREIGN KEY ("+IDCATEGORIA+") REFERENCES "+TABLE_CATEGORIAS+"("+IDCATEGORIA+"));";
+                IMAGEM + " TEXT NOT NULL);";
         db.execSQL(sql);
 
         sql = "CREATE TABLE " + TABLE_FAVORITOS + " ( " +
                 IDFAVORITO + " INTEGER PRIMARY KEY, " +
                 IDPRODUTO + " INTEGER NOT NULL," +
                 "FOREIGN KEY ("+IDPRODUTO+") REFERENCES "+TABLE_PRODUTOS+"("+IDPRODUTO+"));";
-        db.execSQL(sql);
-
-        sql = "CREATE TABLE " + TABLE_IVA + " ( " +
-                IDIVA + " INTEGER PRIMARY KEY, " +
-                VALOR + " DOUBLE(10,2) NOT NULL);";
-        db.execSQL(sql);
-
-        sql = "CREATE TABLE " + TABLE_CATEGORIAS + " ( " +
-                IDCATEGORIA + " INTEGER PRIMARY KEY, " +
-                NOME + " TEXT NOT NULL, " +
-                IDIVA + " INTEGER NOT NULL," +
-                "id_categoria INTEGER," +
-                "FOREIGN KEY ("+IDIVA+") REFERENCES "+TABLE_IVA+"("+IDIVA+")," +
-                "FOREIGN KEY (id_categoria) REFERENCES "+TABLE_CATEGORIAS+"("+IDCATEGORIA+"));";
         db.execSQL(sql);
 
         sql = "CREATE TABLE " + TABLE_MORADAS + " (" +
@@ -112,9 +97,14 @@ public class BDHelper extends SQLiteOpenHelper {
         sql = "CREATE TABLE " + TABLE_CARRINHO + " (" +
                 IDCARRINHO + " INTEGER NOT NULL," +
                 DATA_CRIACAO + " TEXT NOT NULL," +
-                IDMORADA + " INTEGER NOT NULL," +
-                IDLOJA + " INTEGER NOT NULL," +
+                IDMORADA + " INTEGER," +
+                IDLOJA + " INTEGER," +
                 IDPROMOCAO + " INTEGER," +
+                "estado INTEGER(1) NOT NULL," +
+                "subTotal INTEGER NOT NULL," +
+                "iva INTEGER NOT NULL," +
+                "desconto INTEGER NOT NULL," +
+                "total INTEGER NOT NULL," +
                 "PRIMARY KEY ("+IDCARRINHO+"),"+
                 "FOREIGN KEY ("+IDMORADA+") REFERENCES "+TABLE_MORADAS+"("+IDMORADA+")," +
                 "FOREIGN KEY ("+IDLOJA+") REFERENCES loja("+IDLOJA+"));";
@@ -188,8 +178,8 @@ public class BDHelper extends SQLiteOpenHelper {
         db.delete(TABLE_CARRINHO, null, null);
     }
 
-    public void removerAllLinhasCarrinhoBD() {
-        db.delete(TABLE_LINHA_CARRINHO, null, null);
+    public void removerAllLinhasCarrinhoBD(int idCarrinho) {
+        db.delete(TABLE_LINHA_CARRINHO, IDCARRINHO + " = " + idCarrinho, null);
     }
 
     public void removerAllFavoritosBD() {
@@ -201,8 +191,6 @@ public class BDHelper extends SQLiteOpenHelper {
     }
 
     public void removerAllBD() {
-        removerAllLinhasCarrinhoBD();
-        removerAllCarrinhosBD();
         removerAllMoradasBD();
         removerAllLojasBD();
         removerAllFavoritosBD();
@@ -291,6 +279,60 @@ public class BDHelper extends SQLiteOpenHelper {
 
     public void removerFavoritoBD(Produto produto) {
         db.delete(TABLE_FAVORITOS, IDPRODUTO + " = ?", new String[]{String.valueOf(produto.getId())});
+    }
+
+    public Carrinho getCarrinhoBD(){
+        Carrinho carrinho = null;
+        String sql = "SELECT * FROM " + TABLE_CARRINHO + ";";
+        Cursor cursor = db.rawQuery(sql, null);
+        if(cursor.moveToFirst()){
+            //get linhas carrinho from that carrinho
+            ArrayList<LinhaCarrinho> linhasCarrinho = getLinhasCarrinhoBD(cursor.getInt(0));
+            carrinho = new Carrinho(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4),linhasCarrinho,  cursor.getInt(5) >= 1, cursor.getDouble(6), cursor.getDouble(7), cursor.getDouble(8), cursor.getDouble(9));
+            return carrinho;
+        }
+        cursor.close();
+        return null;
+    }
+
+    public void adicionarCarrinhoBD(Carrinho carrinho){
+        if(getCarrinhoBD() != null){
+           removerAllLinhasCarrinhoBD(getCarrinhoBD().getId());
+            removerAllCarrinhosBD();
+        }
+        ContentValues values = new ContentValues();
+        values.put(IDCARRINHO, carrinho.getId());
+        values.put(DATA_CRIACAO, carrinho.getData());
+        values.put(IDLOJA, carrinho.getIdLoja());
+        values.put(IDMORADA, carrinho.getIdMorada());
+        values.put(IDPROMOCAO, carrinho.getIdPromo());
+        values.put("estado", carrinho.getEstado());
+        values.put("subTotal", carrinho.getSubTotal());
+        values.put("iva", carrinho.getIva());
+        values.put("desconto", carrinho.getDesconto());
+        values.put("total", carrinho.getTotal());
+        db.insert(TABLE_CARRINHO, null, values);
+        values = new ContentValues();
+        for (LinhaCarrinho linhaCarrinho : carrinho.getLinhas()) {
+            values.put(IDCARRINHO, carrinho.getId());
+            values.put(IDPRODUTO, linhaCarrinho.getIdProduto());
+            values.put("quantidade", linhaCarrinho.getQuantidade());
+            db.insert(TABLE_LINHA_CARRINHO, null, values);
+        }
+    }
+
+    public ArrayList<LinhaCarrinho> getLinhasCarrinhoBD(int id){
+        ArrayList<LinhaCarrinho> linhasCarrinho = new ArrayList<>();
+        String sql = "SELECT * FROM " + TABLE_LINHA_CARRINHO + " WHERE " + IDCARRINHO + " = " + id + ";";
+        Cursor cursor = db.rawQuery(sql, null);
+        if(cursor.moveToFirst()){
+            do{
+                LinhaCarrinho linhaCarrinho = new LinhaCarrinho(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getInt(3));
+                linhasCarrinho.add(linhaCarrinho);
+            }while(cursor.moveToNext());
+            cursor.close();
+        }
+        return linhasCarrinho;
     }
 
     public ArrayList<Favorito> getAllFavoritosBD() {

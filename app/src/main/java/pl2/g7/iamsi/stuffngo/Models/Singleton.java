@@ -28,6 +28,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -36,6 +37,8 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+
+import pl2.g7.iamsi.stuffngo.Listeners.CarrinhoListener;
 import pl2.g7.iamsi.stuffngo.Listeners.FavoritosListener;
 import pl2.g7.iamsi.stuffngo.Listeners.LoginListener;
 import pl2.g7.iamsi.stuffngo.Listeners.LojasListener;
@@ -53,6 +56,7 @@ public class Singleton {
     private ArrayList<Favorito> favoritos;
     private ArrayList<Loja> lojas;
     private ArrayList<Seccao> seccao;
+    private Carrinho carrinho;
     private BDHelper bdHelper;
     private static RequestQueue requestQueue = null;
     private ProdutosListener produtosListener = null;
@@ -62,15 +66,14 @@ public class Singleton {
     private LojasListener lojasListener = null;
     public SenhaListener senhaListener = null;
     private MqttListener mqttListener = null;
-    private static final String IP = "192.168.137.108";
-    private static final String IP_MQTT = "188.37.63.6";
+    private CarrinhoListener carrinhoListener = null;
+    private static final String IP = "10.0.2.2";
     public static final String URL = "http://"+ IP +"/PL2-G7_ProjetoPlatSI";
     private static final String URL_API = URL + "/backend/web/api";
     public MqttAndroidClient mqttClient;
     private String token;
     private String USERNAME = null;
     private String SENHA = null;
-    private HashMap<String, String> subs = new HashMap<String, String>();
 
 
     public static synchronized Singleton getInstance(Context context) {
@@ -115,7 +118,9 @@ public class Singleton {
     public void setMqttListener(MqttListener mqttListener){
         this.mqttListener = mqttListener;
     }
-
+    public void setCarrinhoListener(CarrinhoListener carrinhoListener){
+        this.carrinhoListener = carrinhoListener;
+    }
     public void setFavoritosListener(FavoritosListener listener){
         this.favoritosListener = listener;
     }
@@ -238,6 +243,132 @@ public class Singleton {
         }
     }
 
+    public void delProdutoCarrinhoAPI(int id){
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.PATCH, URL_API + "/carrinho/produto/" + id + "?auth_key=" + token, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                if(response.has("message") && response.optString("message").equals("No carrinho found."))
+                    if (carrinhoListener != null) {
+                        carrinhoListener.onCarrinhoRefresh(null);
+                    }
+                else
+                    if (carrinhoListener != null) {
+                        carrinhoListener.onCarrinhoUpdate(MainActivity.DEL);
+                    }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error.getMessage());
+            }
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
+
+        requestQueue.add(req);
+    }
+
+    public void addProdutoCarrinhoApi(int idProduto, int quantidade){
+        JSONObject jsonBody = new JSONObject();
+        try {
+            jsonBody.put("idProduto", idProduto);
+            jsonBody.put("quantidade", quantidade);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.PUT, URL_API + "/carrinho/produto?auth_key=" + token, jsonBody, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                if (carrinhoListener != null) {
+                    carrinhoListener.onCarrinhoUpdate(MainActivity.ADD);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error.getMessage());
+            }
+        });
+
+        requestQueue.add(req);
+    }
+
+    public void carrinhoCheckouApi(int id_morada, int id_loja){
+        JSONObject jsonBody = new JSONObject();
+        try {
+            jsonBody.put("id_morada", id_morada);
+            jsonBody.put("id_loja", id_loja);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, URL_API + "/carrinho/checkout?auth_key=" + token, jsonBody, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                if (carrinhoListener != null) {
+                    carrinhoListener.onCarrinhoCheckout();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error.getMessage());
+            }
+        });
+
+        requestQueue.add(req);
+    }
+
+    public Carrinho getCarrinhoBD() {
+        carrinho = bdHelper.getCarrinhoBD();
+        return carrinho;
+    }
+
+    public void getCarrinhoAPI(final Context context){
+        if(!AppJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+            if (carrinhoListener != null) {
+                carrinhoListener.onCarrinhoRefresh(getCarrinhoBD());
+            }
+        }
+        else {
+            JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, URL_API + "/carrinho" + "?auth_key=" + token,null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    carrinho = AppJsonParser.parserJsonCarrinho(response);
+                    if (carrinhoListener != null) {
+                        carrinhoListener.onCarrinhoRefresh(carrinho);
+                    }
+                    if (carrinho != null) {
+                        bdHelper.adicionarCarrinhoBD(carrinho);
+                    }
+                    else {
+                        if(getCarrinhoBD() != null) {
+                            bdHelper.removerAllLinhasCarrinhoBD(getCarrinhoBD().getId());
+                            bdHelper.removerAllCarrinhosBD();
+                        }
+                    }
+                }},
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            if(getCarrinhoBD() != null){
+                                bdHelper.removerAllLinhasCarrinhoBD(getCarrinhoBD().getId());
+                                bdHelper.removerAllCarrinhosBD();
+                            }
+                            System.out.println(error.getMessage() + "");
+                        }
+                    }
+            );
+
+            requestQueue.add(req);
+        }
+    }
+
     public void getAllSeccoesAPI(final Context context , final int id){
         if(!AppJsonParser.isConnectionInternet(context)){
             Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
@@ -351,7 +482,6 @@ public class Singleton {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Erro na ligação ao servidor", Toast.LENGTH_LONG).show();
                     System.out.println(error.getMessage() + "");
                 }
             });
