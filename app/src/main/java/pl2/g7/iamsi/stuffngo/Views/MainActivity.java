@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Map;
+import java.util.Objects;
 
 import pl2.g7.iamsi.stuffngo.Listeners.MqttListener;
 import pl2.g7.iamsi.stuffngo.Listeners.SenhaListener;
@@ -36,7 +38,7 @@ import pl2.g7.iamsi.stuffngo.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity implements MqttListener {
 
     private ActivityMainBinding binding ;
-    public static String TOKEN = null;
+    public static String TOKEN = "invalido";
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -52,8 +54,21 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
             case R.id.carrinho_icon:
                 Toast.makeText(this,"Carrinho", Toast.LENGTH_SHORT).show();
                 return true;
-            case R.id.dropdown:
+            case R.id.dropdown: //Encomendas
                 Toast.makeText(this, "Encomendas", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this,EncomendaActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.logout:
+                SharedPreferences sharedPreferences = getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("Token", "invalido");
+                editor.commit();
+
+                Toast.makeText(this, sharedPreferences.getString("Token",null), Toast.LENGTH_SHORT).show();
+
+                Intent logout = new Intent(this,LoginActivity.class);
+                startActivity(logout);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -64,16 +79,31 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Definition of the Action Bar
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setLogo(R.mipmap.ic_stuffngo);
+
+        //MqttListener
         Singleton.getInstance(this).setMqttListener(this);
+
+        //Acess Shared Preferences and put the TOKEN as the shared Preference "Token"
+        SharedPreferences sharedPreferences = getSharedPreferences("SharedPreferences",MODE_PRIVATE);
+        TOKEN = sharedPreferences.getString("Token",TOKEN);
+
+        //Binding
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        //Set Original Fragment;
         replaceFragment(new HomeFragment());
+
         if(Singleton.getInstance(getApplicationContext()).mqttClient == null)
             connectMqtt();
+
+        //BottomNavigation View
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             switch(item.getItemId()){
                 case R.id.home :
@@ -86,10 +116,16 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
                     replaceFragment(new QrFragment());
                     break;
                 case R.id.settings:
-                    //replaceFragment(new SettingsFragment());
+                    if((!Objects.equals(TOKEN, "invalido")) ){
+                        //replaceFragment(new SettingsFragment());
+                      replaceFragment(new SettingsFragment());
+                    }else{
                         Intent intent = new Intent(this, LoginActivity.class);
                         startActivity(intent);
+                    }
                     break;
+
+
             }
             return true ;
         });

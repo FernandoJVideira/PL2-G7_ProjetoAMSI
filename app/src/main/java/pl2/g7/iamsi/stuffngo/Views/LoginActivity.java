@@ -3,6 +3,7 @@ package pl2.g7.iamsi.stuffngo.Views;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -55,7 +56,13 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
     public void onValidateLogin(String token) {
         System.out.println("Token: " + token);
         if (token != null) {
-            MainActivity.TOKEN = token;
+            //Guarda o valor do Token nas Shared Preferences(name: "Shared Preferences") como Token ;
+            SharedPreferences sharedPreferences = getSharedPreferences("SharedPreferences",MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("Token",token);
+            editor.commit();
+
+            //MainActivity.TOKEN = token;
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();

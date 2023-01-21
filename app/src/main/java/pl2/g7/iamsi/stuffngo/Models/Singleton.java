@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.widget.Toast;
@@ -62,7 +63,7 @@ public class Singleton {
     private LojasListener lojasListener = null;
     public SenhaListener senhaListener = null;
     private MqttListener mqttListener = null;
-    private static final String IP = "192.168.137.108";
+    private static final String IP = "10.0.2.2";
     private static final String IP_MQTT = "188.37.63.6";
     public static final String URL = "http://"+ IP +"/PL2-G7_ProjetoPlatSI";
     private static final String URL_API = URL + "/backend/web/api";
@@ -299,6 +300,8 @@ public class Singleton {
     }
 
     public void adicionarFavoritoApi(final Context context, final Produto produto){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
+        token = sharedPreferences.getString("Token",token);
         if(!AppJsonParser.isConnectionInternet(context)){
             Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
             if (favoritosListener != null) {
@@ -310,7 +313,7 @@ public class Singleton {
                 @Override
                 public void onResponse(JSONObject response) {
                     if(response.has("message"))
-                        Toast.makeText(context, response.optString("message"), Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, response.optString("message"), Toast.LENGTH_SHORT).show();
                     else {
                         Favorito favorito = AppJsonParser.parserJsonFavorito(response);
                         favoritos.add(favorito);
