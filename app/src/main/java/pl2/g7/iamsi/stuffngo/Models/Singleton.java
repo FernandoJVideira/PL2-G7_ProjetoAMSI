@@ -8,8 +8,10 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.widget.Toast;
+
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -18,14 +20,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import org.eclipse.paho.android.service.MqttAndroidClient;
-import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import info.mqtt.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -36,6 +33,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+
 import pl2.g7.iamsi.stuffngo.Listeners.FavoritosListener;
 import pl2.g7.iamsi.stuffngo.Listeners.LoginListener;
 import pl2.g7.iamsi.stuffngo.Listeners.LojasListener;
@@ -464,7 +462,7 @@ public class Singleton {
         int id = random.nextInt(9999 - 1000) + 1000;
         Intent intent = new Intent(context, MainActivity.class);//TODO: mudar para a activity das promos
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
         String channelId = "stuffngo";
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)

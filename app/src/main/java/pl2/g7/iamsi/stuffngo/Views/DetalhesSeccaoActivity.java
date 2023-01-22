@@ -1,31 +1,15 @@
 package pl2.g7.iamsi.stuffngo.Views;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
-import org.eclipse.paho.android.service.MqttAndroidClient;
-import org.eclipse.paho.client.mqttv3.IMqttActionListener;
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.IMqttToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-
-import java.util.ArrayList;
-
 import pl2.g7.iamsi.stuffngo.Listeners.SenhaListener;
 import pl2.g7.iamsi.stuffngo.Models.Seccao;
 import pl2.g7.iamsi.stuffngo.R;
@@ -82,7 +66,7 @@ public class DetalhesSeccaoActivity extends AppCompatActivity implements SenhaLi
                                 Singleton.getInstance(getApplicationContext()).getSenhaDigitalAPI(id);
                                 try {
                                     Singleton.getInstance(getApplicationContext()).mqttClient.subscribe("seccao_" + id, 0);
-                                } catch (MqttException e) {
+                                } catch (Exception e) {
                                     throw new RuntimeException(e);
                                 }
                             }
@@ -110,7 +94,7 @@ public class DetalhesSeccaoActivity extends AppCompatActivity implements SenhaLi
         }
         if(numeroActual != null){
             if(numeroActual.equals(sharedInfoUser.getString("seccao_" + seccao.getId(), null)))
-            Singleton.getInstance(this).createNotification(this,
+                Singleton.getInstance(this).createNotification(this,
                     "StuffNgo - Senha Digital",
                     "Senha actual :" + numeroActual,
                     "Estamos a chamar a sua senha!");

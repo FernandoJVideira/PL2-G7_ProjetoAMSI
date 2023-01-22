@@ -5,30 +5,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
-
-import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Map;
-
+import info.mqtt.android.service.Ack;
+import info.mqtt.android.service.MqttAndroidClient;
 import pl2.g7.iamsi.stuffngo.Listeners.MqttListener;
-import pl2.g7.iamsi.stuffngo.Listeners.SenhaListener;
 import pl2.g7.iamsi.stuffngo.Models.Singleton;
 import pl2.g7.iamsi.stuffngo.R;
 import pl2.g7.iamsi.stuffngo.databinding.ActivityMainBinding;
@@ -121,7 +111,6 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
                     e.printStackTrace();
                 }
                 if (promo != null) {
-                    //Toast.makeText(this, promo, Toast.LENGTH_SHORT).show();
                     Singleton.getInstance(this).createNotification(this,
                             "StuffNgo - " + promo,
                             "Nova promoção à sua espera!",
@@ -144,14 +133,14 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
             options.setConnectionTimeout(10);
             options.setKeepAliveInterval(20);
 
-            Singleton.getInstance(getApplicationContext()).mqttClient = new MqttAndroidClient(this, "tcp://188.37.63.6:1883", "Cliente");
+            Singleton.getInstance(getApplicationContext()).mqttClient = new MqttAndroidClient(this, "tcp://188.37.63.6:1883", "Cliente", Ack.AUTO_ACK);
             Singleton.getInstance(getApplicationContext()).mqttClient.connect(options, null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     try {
                         Singleton.getInstance(getApplicationContext()).mqttClient.subscribe("promo", 1);
-                    } catch (MqttException ex) {
-                        System.out.println("Error: " + ex.getMessage());
+                    } catch (Exception e) {
+                        System.out.println("Error: " + e.getMessage());
                     }
                 }
 
@@ -163,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
 
             Singleton.mqtt(Singleton.getInstance(getApplicationContext()).mqttClient, this);
         }
-        catch (MqttException ex){
+        catch (Exception ex){
             System.out.println("Error: " + ex.getMessage());
         }
 
