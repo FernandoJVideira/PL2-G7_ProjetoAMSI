@@ -101,18 +101,24 @@ public class CarrinhoActivity extends AppCompatActivity implements CarrinhoListe
 
     @Override
     public void onCarrinhoRefresh(Carrinho carrinho) {
-        if (carrinho == null) {
-            Toast.makeText(this, "Carrinho vazio", Toast.LENGTH_SHORT).show();
-            btnCheckout.setEnabled(false);
-            btnCheckout.setAlpha(0.75f);
-            return;
-        }
-        listaCarrinho = findViewById(R.id.cart_list);
-        listaCarrinho.setAdapter(new ListaCarrinhoAdapter(this, carrinho.getLinhas()));
         TextView tvSubTotal = findViewById(R.id.tvSubTotal);
         TextView tvIva = findViewById(R.id.tvIva);
         TextView tvDesconto = findViewById(R.id.tvDesconto);
         TextView tvTotal = findViewById(R.id.tvTotal);
+
+        if (carrinho == null) {
+            Toast.makeText(this, "Carrinho vazio", Toast.LENGTH_SHORT).show();
+            btnCheckout.setEnabled(false);
+            btnCheckout.setAlpha(0.75f);
+            tvSubTotal.setText("0.00€");
+            tvIva.setText("0.00€");
+            tvDesconto.setText("0.00€");
+            tvTotal.setText("0.00€");
+            return;
+        }
+        listaCarrinho = findViewById(R.id.cart_list);
+        listaCarrinho.setAdapter(new ListaCarrinhoAdapter(this, carrinho.getLinhas()));
+
 
         tvSubTotal.setText(carrinho.getSubTotal() + "€");
         tvIva.setText(carrinho.getIva() + "€");
@@ -123,13 +129,13 @@ public class CarrinhoActivity extends AppCompatActivity implements CarrinhoListe
     @Override
     public void onCarrinhoUpdate(int type) {
         switch (type) {
-            case 1:
+            case 30:
                 Toast.makeText(this, "Produto removido", Toast.LENGTH_SHORT).show();
                 break;
-            case 2:
+            case 20:
                 Toast.makeText(this, "Produto adicionado", Toast.LENGTH_SHORT).show();
                 break;
-            case 3:
+            case 10:
                 Toast.makeText(this, "Carrinho actualizado", Toast.LENGTH_SHORT).show();
                 break;
         }

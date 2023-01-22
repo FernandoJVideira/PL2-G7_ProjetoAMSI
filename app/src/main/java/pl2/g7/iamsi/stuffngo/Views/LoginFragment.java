@@ -81,7 +81,8 @@ public class LoginFragment extends Fragment implements LoginListener {
             //Muda para a página de Home
             MainActivity mainActivity = (MainActivity) getActivity();
             mainActivity.loggedIn(true);
-            ((MainActivity) getActivity()).replaceFragment(new HomeFragment());
+            mainActivity.TOKEN = token;
+            ((MainActivity) getActivity()).replaceFragment(new ProfileFragment());
         } else {
             Toast.makeText(getContext(), "Email ou Password Inválidos", Toast.LENGTH_SHORT).show();
         }

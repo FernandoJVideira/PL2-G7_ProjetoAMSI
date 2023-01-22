@@ -10,13 +10,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import pl2.g7.iamsi.stuffngo.Models.Carrinho;
-import pl2.g7.iamsi.stuffngo.Models.Categoria;
 import pl2.g7.iamsi.stuffngo.Models.Favorito;
-import pl2.g7.iamsi.stuffngo.Models.Iva;
 import pl2.g7.iamsi.stuffngo.Models.LinhaCarrinho;
 import pl2.g7.iamsi.stuffngo.Models.Loja;
+import pl2.g7.iamsi.stuffngo.Models.Morada;
 import pl2.g7.iamsi.stuffngo.Models.Produto;
 import pl2.g7.iamsi.stuffngo.Models.Seccao;
+import pl2.g7.iamsi.stuffngo.Models.User;
 
 public class AppJsonParser {
 
@@ -174,5 +174,64 @@ public class AppJsonParser {
             e.printStackTrace();
         }
         return seccoes;
+    }
+    public static User parserJsonUser(JSONObject response) {
+        User user = null;
+        ArrayList<Morada> moradas = new ArrayList<>();
+
+        try {
+            if(!response.has("dados") || !response.has("moradas"))
+            {
+                return null;
+            }
+
+            JSONObject dados = response.getJSONObject("dados");
+            JSONArray moradasJson = response.getJSONArray("moradas");
+
+            String nome = dados.getString("nome");
+            String telemovel = dados.optString("telemovel");
+            String nif = dados.optString("nif");
+            String username = dados.getString("username");
+            String email = dados.getString("email");
+
+            for (int i = 0; i < moradasJson.length(); i++)
+            {
+                JSONObject moradaJSON = moradasJson.getJSONObject(i);
+
+                int idMorada = moradaJSON.getInt("idMorada");
+                String rua = moradaJSON.getString("rua");
+                String cidade = moradaJSON.getString("cidade");
+                String codigoPostal = moradaJSON.getString("cod_postal");
+                String pais = moradaJSON.getString("pais");
+
+                moradas.add(new Morada(idMorada, rua, cidade, codigoPostal, pais));
+            }
+
+            user = new User(username, nome, email, nif, telemovel, moradas);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+    public static Morada parserJsonMorada(JSONObject response) {
+        Morada morada = null;
+
+        try {
+            JSONObject moradaJSON = response.getJSONObject("morada");
+
+            int idMorada = moradaJSON.getInt("idMorada");
+            String rua = moradaJSON.getString("rua");
+            String cidade = moradaJSON.getString("cidade");
+            String codigoPostal = moradaJSON.getString("cod_postal");
+            String pais = moradaJSON.getString("pais");
+
+            morada = new Morada(idMorada, rua, cidade, codigoPostal, pais);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return morada;
     }
 }

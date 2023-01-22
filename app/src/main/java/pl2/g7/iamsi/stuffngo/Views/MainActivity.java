@@ -13,11 +13,16 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 import java.util.Objects;
 import info.mqtt.android.service.Ack;
 import info.mqtt.android.service.MqttAndroidClient;
@@ -29,9 +34,11 @@ import pl2.g7.iamsi.stuffngo.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity implements MqttListener {
     private ActivityMainBinding binding;
-    public static int DEL = 1, ADD = 2, UPDATE = 3;
     private Menu menu;
     public static String TOKEN = null;
+    public static final String OPERACAO = "OP";
+    public static final int EDIT = 10, ADD = 20, DELETE = 30;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
@@ -74,7 +81,8 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
                 editor.apply();
                 TOKEN = null;
                 loggedIn(false);
-                replaceFragment(new HomeFragment());
+                binding.bottomNavigationView.setSelectedItemId(R.id.home);
+                Toast.makeText(this, "Sessão terminada", Toast.LENGTH_SHORT).show();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -83,9 +91,10 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        //Definition of the Action Bar
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayUseLogoEnabled(true);
@@ -104,9 +113,6 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
 
         //Set Original Fragment;
         replaceFragment(new HomeFragment());
-
-        if(Singleton.getInstance(getApplicationContext()).mqttClient == null)
-            connectMqtt();
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             switch(item.getItemId()){
                 case R.id.home :
@@ -118,17 +124,18 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
                 case R.id.qr:
                     replaceFragment(new QrFragment());
                     break;
-                case R.id.settings:
+                case R.id.profile:
                     if(TOKEN == null){
                         replaceFragment(new LoginFragment());
                     }else{
-                        replaceFragment(new SettingsFragment());
+                        replaceFragment(new ProfileFragment());
                     }
                     break;
             }
             return true ;
         });
     }
+
     public void replaceFragment(Fragment fragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

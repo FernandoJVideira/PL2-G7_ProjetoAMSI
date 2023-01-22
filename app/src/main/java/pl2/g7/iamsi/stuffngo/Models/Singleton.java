@@ -11,8 +11,10 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.widget.Toast;
+
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -20,6 +22,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -27,6 +30,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -34,15 +38,18 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+
 import info.mqtt.android.service.MqttAndroidClient;
 import pl2.g7.iamsi.stuffngo.Listeners.CarrinhoListener;
 import pl2.g7.iamsi.stuffngo.Listeners.FavoritosListener;
 import pl2.g7.iamsi.stuffngo.Listeners.LoginListener;
 import pl2.g7.iamsi.stuffngo.Listeners.LojasListener;
+import pl2.g7.iamsi.stuffngo.Listeners.MoradaListener;
 import pl2.g7.iamsi.stuffngo.Listeners.MqttListener;
 import pl2.g7.iamsi.stuffngo.Listeners.ProdutosListener;
 import pl2.g7.iamsi.stuffngo.Listeners.SeccoesListener;
 import pl2.g7.iamsi.stuffngo.Listeners.SenhaListener;
+import pl2.g7.iamsi.stuffngo.Listeners.UserListener;
 import pl2.g7.iamsi.stuffngo.R;
 import pl2.g7.iamsi.stuffngo.Utils.AppJsonParser;
 import pl2.g7.iamsi.stuffngo.Views.MainActivity;
@@ -62,6 +69,8 @@ public class Singleton {
     private SeccoesListener seccoesListener = null;
     private LojasListener lojasListener = null;
     public SenhaListener senhaListener = null;
+    public UserListener userListener = null;
+    public MoradaListener moradasListener = null;
     private MqttListener mqttListener = null;
     private CarrinhoListener carrinhoListener = null;
     private static final String IP = "10.0.2.2";
@@ -70,6 +79,7 @@ public class Singleton {
     public MqttAndroidClient mqttClient;
     private String token;
     private String USERNAME = null;
+    private User user;
     private String SENHA = null;
 
     public static synchronized Singleton getInstance(Context context) {
@@ -252,7 +262,7 @@ public class Singleton {
                     }
                 else
                     if (carrinhoListener != null) {
-                        carrinhoListener.onCarrinhoUpdate(MainActivity.DEL);
+                        carrinhoListener.onCarrinhoUpdate(MainActivity.DELETE);
                     }
             }
         }, new Response.ErrorListener() {
@@ -616,4 +626,182 @@ public class Singleton {
         }
         notificationManager.notify(id, builder.build());
     }
+    //region User
+
+    public void setUserListener(UserListener listener){
+        this.userListener = listener;
+    }
+
+    public User getUser() { return user; }
+
+    public void getUserDataAPI(final Context context, final String token){
+            if(!AppJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+        }
+        else {
+            JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, URL_API + "/user" + "?auth_key=" + token,null, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            user = AppJsonParser.parserJsonUser(response);
+                            if (user != null) {
+                                userListener.onRefreshUser(user);
+                            }
+                        }},
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(context, error.getMessage()+ "", Toast.LENGTH_LONG).show();
+                        }
+                    }
+            );
+
+            requestQueue.add(req);
+        }
+    }
+
+    public void editarDadosAPI(final User user, final Context context, final String token){
+
+        if(!AppJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
+        }else{
+
+            Map<String, String> params = new HashMap<>();
+            params.put("token", token);
+            params.put("nome", user.getNome());
+            params.put("nif", user.getNif());
+            params.put("telemovel", user.getTelemovel());
+            params.put("email", user.getEmail());
+            params.put("username", user.getUsername());
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, URL_API + "/user/utilizador" + "?auth_key=" + token, new JSONObject(params),new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+
+                    Toast.makeText(context, "Utilizador editado com sucesso", Toast.LENGTH_SHORT).show();
+
+                    if(userListener != null){
+                        userListener.onRefreshUser(user);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json; charset=utf-8");
+                    return headers;
+                }
+            };
+            requestQueue.add(request);
+        }
+    }
+
+    public void setMoradaListener(MoradaListener listener){
+        this.moradasListener = listener;
+    }
+
+    public void editarMoradaAPI(final Morada morada, final Context context, final String token){
+
+        if(!AppJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
+        }else{
+
+            Map<String, String> params = new HashMap<>();
+            //params.put("token", token);
+            params.put("rua", morada.getRua());
+            params.put("cidade", morada.getCidade());
+            params.put("cod_postal", morada.getCodPostal());
+            params.put("pais", morada.getPais());
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, URL_API + "/morada/" + morada.getId() + "?auth_key=" + token, new JSONObject(params),new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+
+                    if(moradasListener != null){
+                        moradasListener.onMoradasRefresh(MainActivity.EDIT);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json; charset=utf-8");
+                    return headers;
+                }
+            };
+            requestQueue.add(request);
+        }
+    }
+
+    public void addMoradaAPI(final Morada morada, final Context context, final String token){
+
+        if(!AppJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
+        }else{
+
+            Map<String, String> params = new HashMap<>();
+            //params.put("token", token);
+            params.put("rua", morada.getRua());
+            params.put("cidade", morada.getCidade());
+            params.put("cod_postal", morada.getCodPostal());
+            params.put("pais", morada.getPais());
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL_API + "/morada" + "?auth_key=" + token, new JSONObject(params),new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    if(moradasListener != null){
+                        moradasListener.onMoradasRefresh(MainActivity.ADD);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json; charset=utf-8");
+                    return headers;
+                }
+            };
+            requestQueue.add(request);
+        }
+    }
+
+    public void removerMoradaAPI(final Morada morada, final Context context, final String token){
+        if(!AppJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
+        }else{
+            StringRequest request = new StringRequest(Request.Method.DELETE, URL_API + "/morada/" + morada.getId() + "?auth_key=" + token, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    if(moradasListener != null){
+                        moradasListener.onMoradasRefresh(MainActivity.DELETE);
+                    }
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, error.getMessage()+"", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            requestQueue.add(request);
+        }
+    }
+
+    //endregion
+
 }
