@@ -13,19 +13,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
-import org.eclipse.paho.android.service.MqttAndroidClient;
-import org.eclipse.paho.client.mqttv3.IMqttActionListener;
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.IMqttToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-
-import java.util.ArrayList;
-
 import pl2.g7.iamsi.stuffngo.Listeners.SenhaListener;
 import pl2.g7.iamsi.stuffngo.Models.Seccao;
 import pl2.g7.iamsi.stuffngo.R;
@@ -82,7 +69,7 @@ public class DetalhesSeccaoActivity extends AppCompatActivity implements SenhaLi
                                 Singleton.getInstance(getApplicationContext()).getSenhaDigitalAPI(id);
                                 try {
                                     Singleton.getInstance(getApplicationContext()).mqttClient.subscribe("seccao_" + id, 1);
-                                } catch (MqttException e) {
+                                } catch (Exception e) {
                                     throw new RuntimeException(e);
                                 }
                             }

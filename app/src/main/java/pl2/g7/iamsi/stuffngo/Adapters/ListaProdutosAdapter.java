@@ -16,6 +16,7 @@ import pl2.g7.iamsi.stuffngo.Models.Produto;
 import pl2.g7.iamsi.stuffngo.Models.Singleton;
 import pl2.g7.iamsi.stuffngo.R;
 import pl2.g7.iamsi.stuffngo.Views.HomeFragment;
+import pl2.g7.iamsi.stuffngo.Views.MainActivity;
 
 public class ListaProdutosAdapter extends BaseAdapter {
     Context context;
@@ -78,7 +79,7 @@ public class ListaProdutosAdapter extends BaseAdapter {
             tvPreco = view.findViewById(R.id.tvPreco);
             imgCapa = view.findViewById(R.id.imageView);
             btCart = view.findViewById(R.id.btCart);
-            if(Singleton.getInstance(context).getUSERNAME() == null){
+            if(MainActivity.TOKEN == null){
                 btCart.setImageAlpha(75);
                 btCart.setEnabled(false);
             }

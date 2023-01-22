@@ -1,10 +1,13 @@
 package pl2.g7.iamsi.stuffngo.Models;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.widget.Toast;
@@ -18,14 +21,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import org.eclipse.paho.android.service.MqttAndroidClient;
-import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +34,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-
+import info.mqtt.android.service.MqttAndroidClient;
 import pl2.g7.iamsi.stuffngo.Listeners.CarrinhoListener;
 import pl2.g7.iamsi.stuffngo.Listeners.FavoritosListener;
 import pl2.g7.iamsi.stuffngo.Listeners.LoginListener;
@@ -75,7 +72,6 @@ public class Singleton {
     private String USERNAME = null;
     private String SENHA = null;
 
-
     public static synchronized Singleton getInstance(Context context) {
         if (INSTANCE == null) {
             INSTANCE = new Singleton(context);
@@ -88,6 +84,9 @@ public class Singleton {
         produtos = new ArrayList<>();
         favoritos = new ArrayList<>();
         bdHelper = new BDHelper(context);
+        SharedPreferences sharedInfoUser = context.getSharedPreferences("SharedPreferences", MODE_PRIVATE);
+        if(sharedInfoUser.getString("Token", null) != null)
+            token = sharedInfoUser.getString("Token", null);
     }
 
     public Produto getProduto(int id){
@@ -191,7 +190,7 @@ public class Singleton {
                 if (token != null)
                     USERNAME = username;
                 if (loginListener != null) {
-                    loginListener.onValidateLogin(token);
+                    loginListener.onValidateLogin(token, username);
                 }
             }
         }, new Response.ErrorListener() {
@@ -418,9 +417,6 @@ public class Singleton {
     public String getUSERNAME() {
         return USERNAME;
     }
-    public String getSENHA() {
-        return SENHA;
-    }
 
     public ArrayList<Seccao> getSeccoes() {
         if(seccao == null){
@@ -430,6 +426,8 @@ public class Singleton {
     }
 
     public void adicionarFavoritoApi(final Context context, final Produto produto){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
+        token = sharedPreferences.getString("Token", token);
         if(!AppJsonParser.isConnectionInternet(context)){
             Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
             if (favoritosListener != null) {
@@ -441,7 +439,7 @@ public class Singleton {
                 @Override
                 public void onResponse(JSONObject response) {
                     if(response.has("message"))
-                        Toast.makeText(context, response.optString("message"), Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, response.optString("message"), Toast.LENGTH_SHORT).show();
                     else {
                         Favorito favorito = AppJsonParser.parserJsonFavorito(response);
                         favoritos.add(favorito);

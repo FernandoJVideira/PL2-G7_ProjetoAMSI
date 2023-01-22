@@ -49,7 +49,7 @@ public class DetalhesProdutosActivity extends AppCompatActivity implements Favor
         btCart = findViewById(R.id.btCart);
         etQuantidade = findViewById(R.id.etQuantidade);
         etQuantidade.setFilters(new InputFilter[]{ new InputFilterMinMax("1", "10")});
-        if(Singleton.getInstance(this).getUSERNAME() != null)
+        if(MainActivity.TOKEN != null)
             Singleton.getInstance(this).getAllFavoritosAPI(this);
         int id = getIntent().getIntExtra(IDPRODUTO, 0);
         int quantidade = getIntent().getIntExtra("quantidade", 0);
@@ -58,7 +58,7 @@ public class DetalhesProdutosActivity extends AppCompatActivity implements Favor
         }
         produto = Singleton.getInstance(this).getProduto(id);
         Singleton.getInstance(this).setFavoritosListener(this);
-        if(Singleton.getInstance(this).getUSERNAME() == null){
+        if(MainActivity.TOKEN == null){
             btCart.setImageAlpha(75);
             btFav.setImageAlpha(75);
             btPlus.setImageAlpha(75);
