@@ -1,10 +1,13 @@
 package pl2.g7.iamsi.stuffngo.Models;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.widget.Toast;
@@ -19,13 +22,16 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import info.mqtt.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -34,13 +40,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import info.mqtt.android.service.MqttAndroidClient;
+import pl2.g7.iamsi.stuffngo.Listeners.CarrinhoListener;
 import pl2.g7.iamsi.stuffngo.Listeners.FavoritosListener;
 import pl2.g7.iamsi.stuffngo.Listeners.LoginListener;
 import pl2.g7.iamsi.stuffngo.Listeners.LojasListener;
+import pl2.g7.iamsi.stuffngo.Listeners.MoradaListener;
 import pl2.g7.iamsi.stuffngo.Listeners.MqttListener;
 import pl2.g7.iamsi.stuffngo.Listeners.ProdutosListener;
 import pl2.g7.iamsi.stuffngo.Listeners.SeccoesListener;
 import pl2.g7.iamsi.stuffngo.Listeners.SenhaListener;
+import pl2.g7.iamsi.stuffngo.Listeners.UserListener;
 import pl2.g7.iamsi.stuffngo.R;
 import pl2.g7.iamsi.stuffngo.Utils.AppJsonParser;
 import pl2.g7.iamsi.stuffngo.Views.MainActivity;
@@ -51,6 +61,7 @@ public class Singleton {
     private ArrayList<Favorito> favoritos;
     private ArrayList<Loja> lojas;
     private ArrayList<Seccao> seccao;
+    private Carrinho carrinho;
     private BDHelper bdHelper;
     private static RequestQueue requestQueue = null;
     private ProdutosListener produtosListener = null;
@@ -59,17 +70,18 @@ public class Singleton {
     private SeccoesListener seccoesListener = null;
     private LojasListener lojasListener = null;
     public SenhaListener senhaListener = null;
+    public UserListener userListener = null;
+    public MoradaListener moradasListener = null;
     private MqttListener mqttListener = null;
-    private static final String IP = "192.168.137.108";
-    private static final String IP_MQTT = "188.37.63.6";
+    private CarrinhoListener carrinhoListener = null;
+    private static final String IP = "10.0.2.2";
     public static final String URL = "http://"+ IP +"/PL2-G7_ProjetoPlatSI";
     private static final String URL_API = URL + "/backend/web/api";
     public MqttAndroidClient mqttClient;
     private String token;
     private String USERNAME = null;
+    private User user;
     private String SENHA = null;
-    private HashMap<String, String> subs = new HashMap<String, String>();
-
 
     public static synchronized Singleton getInstance(Context context) {
         if (INSTANCE == null) {
@@ -83,6 +95,9 @@ public class Singleton {
         produtos = new ArrayList<>();
         favoritos = new ArrayList<>();
         bdHelper = new BDHelper(context);
+        SharedPreferences sharedInfoUser = context.getSharedPreferences("SharedPreferences", MODE_PRIVATE);
+        if(sharedInfoUser.getString("Token", null) != null)
+            token = sharedInfoUser.getString("Token", null);
     }
 
     public Produto getProduto(int id){
@@ -113,7 +128,9 @@ public class Singleton {
     public void setMqttListener(MqttListener mqttListener){
         this.mqttListener = mqttListener;
     }
-
+    public void setCarrinhoListener(CarrinhoListener carrinhoListener){
+        this.carrinhoListener = carrinhoListener;
+    }
     public void setFavoritosListener(FavoritosListener listener){
         this.favoritosListener = listener;
     }
@@ -184,7 +201,7 @@ public class Singleton {
                 if (token != null)
                     USERNAME = username;
                 if (loginListener != null) {
-                    loginListener.onValidateLogin(token);
+                    loginListener.onValidateLogin(token, username);
                 }
             }
         }, new Response.ErrorListener() {
@@ -227,6 +244,132 @@ public class Singleton {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             Toast.makeText(context, "Erro na ligação ao servidor", Toast.LENGTH_LONG).show();
+                            System.out.println(error.getMessage() + "");
+                        }
+                    }
+            );
+
+            requestQueue.add(req);
+        }
+    }
+
+    public void delProdutoCarrinhoAPI(int id){
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.PATCH, URL_API + "/carrinho/produto/" + id + "?auth_key=" + token, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                if(response.has("message") && response.optString("message").equals("No carrinho found."))
+                    if (carrinhoListener != null) {
+                        carrinhoListener.onCarrinhoRefresh(null);
+                    }
+                else
+                    if (carrinhoListener != null) {
+                        carrinhoListener.onCarrinhoUpdate(MainActivity.DELETE);
+                    }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error.getMessage());
+            }
+        }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
+
+        requestQueue.add(req);
+    }
+
+    public void addProdutoCarrinhoApi(int idProduto, int quantidade){
+        JSONObject jsonBody = new JSONObject();
+        try {
+            jsonBody.put("idProduto", idProduto);
+            jsonBody.put("quantidade", quantidade);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.PUT, URL_API + "/carrinho/produto?auth_key=" + token, jsonBody, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                if (carrinhoListener != null) {
+                    carrinhoListener.onCarrinhoUpdate(MainActivity.ADD);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error.getMessage());
+            }
+        });
+
+        requestQueue.add(req);
+    }
+
+    public void carrinhoCheckouApi(int id_morada, int id_loja){
+        JSONObject jsonBody = new JSONObject();
+        try {
+            jsonBody.put("id_morada", id_morada);
+            jsonBody.put("id_loja", id_loja);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, URL_API + "/carrinho/checkout?auth_key=" + token, jsonBody, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                if (carrinhoListener != null) {
+                    carrinhoListener.onCarrinhoCheckout();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error.getMessage());
+            }
+        });
+
+        requestQueue.add(req);
+    }
+
+    public Carrinho getCarrinhoBD() {
+        carrinho = bdHelper.getCarrinhoBD();
+        return carrinho;
+    }
+
+    public void getCarrinhoAPI(final Context context){
+        if(!AppJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+            if (carrinhoListener != null) {
+                carrinhoListener.onCarrinhoRefresh(getCarrinhoBD());
+            }
+        }
+        else {
+            JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, URL_API + "/carrinho" + "?auth_key=" + token,null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    carrinho = AppJsonParser.parserJsonCarrinho(response);
+                    if (carrinhoListener != null) {
+                        carrinhoListener.onCarrinhoRefresh(carrinho);
+                    }
+                    if (carrinho != null) {
+                        bdHelper.adicionarCarrinhoBD(carrinho);
+                    }
+                    else {
+                        if(getCarrinhoBD() != null) {
+                            bdHelper.removerAllLinhasCarrinhoBD(getCarrinhoBD().getId());
+                            bdHelper.removerAllCarrinhosBD();
+                        }
+                    }
+                }},
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            if(getCarrinhoBD() != null){
+                                bdHelper.removerAllLinhasCarrinhoBD(getCarrinhoBD().getId());
+                                bdHelper.removerAllCarrinhosBD();
+                            }
                             System.out.println(error.getMessage() + "");
                         }
                     }
@@ -285,9 +428,6 @@ public class Singleton {
     public String getUSERNAME() {
         return USERNAME;
     }
-    public String getSENHA() {
-        return SENHA;
-    }
 
     public ArrayList<Seccao> getSeccoes() {
         if(seccao == null){
@@ -297,6 +437,8 @@ public class Singleton {
     }
 
     public void adicionarFavoritoApi(final Context context, final Produto produto){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
+        token = sharedPreferences.getString("Token", token);
         if(!AppJsonParser.isConnectionInternet(context)){
             Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
             if (favoritosListener != null) {
@@ -308,7 +450,7 @@ public class Singleton {
                 @Override
                 public void onResponse(JSONObject response) {
                     if(response.has("message"))
-                        Toast.makeText(context, response.optString("message"), Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, response.optString("message"), Toast.LENGTH_SHORT).show();
                     else {
                         Favorito favorito = AppJsonParser.parserJsonFavorito(response);
                         favoritos.add(favorito);
@@ -349,7 +491,6 @@ public class Singleton {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Erro na ligação ao servidor", Toast.LENGTH_LONG).show();
                     System.out.println(error.getMessage() + "");
                 }
             });
@@ -486,4 +627,182 @@ public class Singleton {
         }
         notificationManager.notify(id, builder.build());
     }
+    //region User
+
+    public void setUserListener(UserListener listener){
+        this.userListener = listener;
+    }
+
+    public User getUser() { return user; }
+
+    public void getUserDataAPI(final Context context){
+            if(!AppJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+        }
+        else {
+            JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, URL_API + "/user" + "?auth_key=" + token,null, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            user = AppJsonParser.parserJsonUser(response);
+                            if (user != null) {
+                                userListener.onRefreshUser(user);
+                            }
+                        }},
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(context, error.getMessage()+ "", Toast.LENGTH_LONG).show();
+                        }
+                    }
+            );
+
+            requestQueue.add(req);
+        }
+    }
+
+    public void editarDadosAPI(final User user, final Context context){
+
+        if(!AppJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
+        }else{
+
+            Map<String, String> params = new HashMap<>();
+            params.put("token", token);
+            params.put("nome", user.getNome());
+            params.put("nif", user.getNif());
+            params.put("telemovel", user.getTelemovel());
+            params.put("email", user.getEmail());
+            params.put("username", user.getUsername());
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, URL_API + "/user/utilizador" + "?auth_key=" + token, new JSONObject(params),new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+
+                    Toast.makeText(context, "Utilizador editado com sucesso", Toast.LENGTH_SHORT).show();
+
+                    if(userListener != null){
+                        userListener.onRefreshUser(user);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json; charset=utf-8");
+                    return headers;
+                }
+            };
+            requestQueue.add(request);
+        }
+    }
+
+    public void setMoradaListener(MoradaListener listener){
+        this.moradasListener = listener;
+    }
+
+    public void editarMoradaAPI(final Morada morada, final Context context){
+
+        if(!AppJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
+        }else{
+
+            Map<String, String> params = new HashMap<>();
+            //params.put("token", token);
+            params.put("rua", morada.getRua());
+            params.put("cidade", morada.getCidade());
+            params.put("cod_postal", morada.getCodPostal());
+            params.put("pais", morada.getPais());
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, URL_API + "/morada/" + morada.getId() + "?auth_key=" + token, new JSONObject(params),new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+
+                    if(moradasListener != null){
+                        moradasListener.onMoradasRefresh(MainActivity.EDIT);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json; charset=utf-8");
+                    return headers;
+                }
+            };
+            requestQueue.add(request);
+        }
+    }
+
+    public void addMoradaAPI(final Morada morada, final Context context){
+
+        if(!AppJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
+        }else{
+
+            Map<String, String> params = new HashMap<>();
+            //params.put("token", token);
+            params.put("rua", morada.getRua());
+            params.put("cidade", morada.getCidade());
+            params.put("cod_postal", morada.getCodPostal());
+            params.put("pais", morada.getPais());
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL_API + "/morada" + "?auth_key=" + token, new JSONObject(params),new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    if(moradasListener != null){
+                        moradasListener.onMoradasRefresh(MainActivity.ADD);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json; charset=utf-8");
+                    return headers;
+                }
+            };
+            requestQueue.add(request);
+        }
+    }
+
+    public void removerMoradaAPI(final Morada morada, final Context context){
+        if(!AppJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
+        }else{
+            StringRequest request = new StringRequest(Request.Method.DELETE, URL_API + "/morada/" + morada.getId() + "?auth_key=" + token, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    if(moradasListener != null){
+                        moradasListener.onMoradasRefresh(MainActivity.DELETE);
+                    }
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, error.getMessage()+"", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            requestQueue.add(request);
+        }
+    }
+
+    //endregion
+
 }

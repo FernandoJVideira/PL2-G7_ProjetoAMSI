@@ -13,8 +13,12 @@
         android:title="@string/carrinho_nav"
         app:showAsAction="always"/>
     <item
-        android:id="@+id/dropdown"
+        android:id="@+id/encomendas"
         android:title="Encomendas"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/logout"
+        android:title="Logout"
         app:showAsAction="never" />
 
 

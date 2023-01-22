@@ -18,9 +18,9 @@
 
         />
 
-    <item android:title="@string/settings"
-        android:id="@+id/settings"
-        android:icon="@drawable/ic_settings_foreground"
+    <item android:title="@string/profile"
+        android:id="@+id/profile"
+        android:icon="@drawable/ic_profile_foreground"
         />
 
 </menu>

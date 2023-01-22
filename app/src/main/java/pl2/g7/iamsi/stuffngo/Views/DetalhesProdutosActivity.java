@@ -1,6 +1,8 @@
 package pl2.g7.iamsi.stuffngo.Views;
 import static android.os.SystemClock.sleep;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -9,7 +11,12 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.Toolbar;
+
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import java.util.ArrayList;
 import pl2.g7.iamsi.stuffngo.Listeners.FavoritosListener;
 import pl2.g7.iamsi.stuffngo.Models.Favorito;
@@ -42,11 +49,26 @@ public class DetalhesProdutosActivity extends AppCompatActivity implements Favor
         btCart = findViewById(R.id.btCart);
         etQuantidade = findViewById(R.id.etQuantidade);
         etQuantidade.setFilters(new InputFilter[]{ new InputFilterMinMax("1", "10")});
-        Singleton.getInstance(this).getAllFavoritosAPI(this);
+        if(MainActivity.TOKEN != null)
+            Singleton.getInstance(this).getAllFavoritosAPI(this);
         int id = getIntent().getIntExtra(IDPRODUTO, 0);
+        int quantidade = getIntent().getIntExtra("quantidade", 0);
+        if(quantidade != 0){
+            etQuantidade.setText(String.valueOf(quantidade));
+        }
         produto = Singleton.getInstance(this).getProduto(id);
         Singleton.getInstance(this).setFavoritosListener(this);
-
+        if(MainActivity.TOKEN == null){
+            btCart.setImageAlpha(75);
+            btFav.setImageAlpha(75);
+            btPlus.setImageAlpha(75);
+            btMinus.setImageAlpha(75);
+            btCart.setEnabled(false);
+            btFav.setEnabled(false);
+            btPlus.setEnabled(false);
+            btMinus.setEnabled(false);
+            etQuantidade.setEnabled(false);
+        }
         if(produto != null) {
             carregarProduto();
         }
@@ -75,6 +97,12 @@ public class DetalhesProdutosActivity extends AppCompatActivity implements Favor
                 btFav.setImageResource(R.drawable.ic_fav);
             }
         });
+
+        btCart.setOnClickListener(v -> {
+            Singleton.getInstance(this).addProdutoCarrinhoApi(produto.getId(), Integer.parseInt(etQuantidade.getText().toString()));
+            if(quantidade != 0)
+                finish();
+        });
     }
 
     private void carregarProduto() {
@@ -84,7 +112,7 @@ public class DetalhesProdutosActivity extends AppCompatActivity implements Favor
         tvNome.setText(produto.getNome());
         tvDescricao.setText(produto.getDescricao());
         tvPreco.setText(String.format("%s €", produto.getPreco_unit()));
-        Glide.with(this).load(Singleton.URL + "/common/Images/" + produto.getImagem()).into(Image);
+        Glide.with(this).load(Singleton.URL + "/common/Images/" + produto.getImagem()).diskCacheStrategy(DiskCacheStrategy.ALL).into(Image);
 
     }
 

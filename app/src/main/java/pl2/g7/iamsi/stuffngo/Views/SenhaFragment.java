@@ -33,6 +33,7 @@ import pl2.g7.iamsi.stuffngo.Models.Loja;
 import pl2.g7.iamsi.stuffngo.Models.Seccao;
 import pl2.g7.iamsi.stuffngo.Models.Singleton;
 import pl2.g7.iamsi.stuffngo.R;
+import pl2.g7.iamsi.stuffngo.Utils.AppJsonParser;
 
 public class SenhaFragment extends Fragment implements SeccoesListener, LojasListener {
     ListView lvSeccao;
@@ -43,7 +44,6 @@ public class SenhaFragment extends Fragment implements SeccoesListener, LojasLis
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -53,7 +53,7 @@ public class SenhaFragment extends Fragment implements SeccoesListener, LojasLis
         Singleton.getInstance(getContext()).getAllLojasAPI();
         lojas = Singleton.getInstance(getContext()).getLojasBD();
         niceSpinner = (NiceSpinner) view.findViewById(R.id.nice_spinner);
-        if(lojas != null) {
+        if(lojas != null && AppJsonParser.isConnectionInternet(getContext())) {
             List<String> list = new ArrayList<String>();
             for (Loja l : lojas) {
                 list.add(l.getDescricao());
@@ -98,7 +98,7 @@ public class SenhaFragment extends Fragment implements SeccoesListener, LojasLis
     public void onRefreshListaSeccoes(ArrayList<Seccao> seccoes) {
         if(seccoes != null) {
             lvSeccao.setAdapter(new ListaSeccaoAdapter(getContext(),seccoes));
-            SharedPreferences sharedInfoUser = getContext().getSharedPreferences(Singleton.getInstance(getContext()).getUSERNAME(), MODE_PRIVATE);
+            SharedPreferences sharedInfoUser = getContext().getSharedPreferences("senhaDigital", MODE_PRIVATE);
             for (Seccao s : seccoes) {
                 if (sharedInfoUser.getString("seccao_" + s.getId(), null) != null) {
                     if (Integer.parseInt(sharedInfoUser.getString("seccao_" + s.getId(), null)) < s.getNumeroActual()) {

@@ -1,5 +1,6 @@
     package pl2.g7.iamsi.stuffngo.Views;
 
+    import android.content.Context;
     import android.content.Intent;
     import android.os.Bundle;
 
@@ -25,11 +26,8 @@
 
     public class HomeFragment extends Fragment implements ProdutosListener {
         ListView lvProdutos;
-        private FloatingActionButton fabLista;
         private SearchView searchView;
-        public static final int DETALHES = 1;
         public HomeFragment() {
-            // Required empty public constructor
         }
 
         @Override

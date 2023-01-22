@@ -5,12 +5,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -18,21 +23,43 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import info.mqtt.android.service.Ack;
 import info.mqtt.android.service.MqttAndroidClient;
+
+import java.util.List;
+import java.util.Objects;
+import info.mqtt.android.service.Ack;
+import info.mqtt.android.service.MqttAndroidClient;
+import pl2.g7.iamsi.stuffngo.Listeners.LoginListener;
 import pl2.g7.iamsi.stuffngo.Listeners.MqttListener;
 import pl2.g7.iamsi.stuffngo.Models.Singleton;
 import pl2.g7.iamsi.stuffngo.R;
 import pl2.g7.iamsi.stuffngo.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity implements MqttListener {
-
-    private ActivityMainBinding binding ;
+    private ActivityMainBinding binding;
+    private Menu menu;
     public static String TOKEN = null;
+    public static final String OPERACAO = "OP";
+    public static final int EDIT = 10, ADD = 20, DELETE = 30;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.upper_nav_menu,menu);
+        inflater.inflate(R.menu.upper_nav_menu, menu);
+        SharedPreferences sharedPreferences = getSharedPreferences("SharedPreferences",MODE_PRIVATE);
+        TOKEN = sharedPreferences.getString("Token", TOKEN);
+        if(TOKEN == null){
+            loggedIn(false);
+        }
         return true;
     }
+
+    public void loggedIn(boolean loggedIn){
+        menu.findItem(R.id.carrinho_icon).setVisible(loggedIn);
+        menu.findItem(R.id.encomendas).setVisible(loggedIn);
+        menu.findItem(R.id.logout).setVisible(loggedIn);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
@@ -40,30 +67,54 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
                 Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
                return true;
             case R.id.carrinho_icon:
-                Toast.makeText(this,"Carrinho", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(this, CarrinhoActivity.class);
+                    startActivity(intent);
                 return true;
-            case R.id.dropdown:
+            case R.id.encomendas: //Encomendas
                 Toast.makeText(this, "Encomendas", Toast.LENGTH_SHORT).show();
+                intent = new Intent(this, EncomendaActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.logout:
+                SharedPreferences sharedPreferences = getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.remove("Token");
+                editor.remove("Username");
+                editor.apply();
+                TOKEN = null;
+                loggedIn(false);
+                binding.bottomNavigationView.setSelectedItemId(R.id.home);
+                Toast.makeText(this, "Sessão terminada", Toast.LENGTH_SHORT).show();
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setLogo(R.mipmap.ic_stuffngo);
+
+        //MqttListener
         Singleton.getInstance(this).setMqttListener(this);
+
+        //Acess Shared Preferences and put the TOKEN as the shared Preference "Token"
+        SharedPreferences sharedPreferences = getSharedPreferences("SharedPreferences",MODE_PRIVATE);
+        TOKEN = sharedPreferences.getString("Token", TOKEN);
+
+        //Binding
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        //Set Original Fragment;
         replaceFragment(new HomeFragment());
-        if(Singleton.getInstance(getApplicationContext()).mqttClient == null)
-            connectMqtt();
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             switch(item.getItemId()){
                 case R.id.home :
@@ -75,15 +126,18 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
                 case R.id.qr:
                     replaceFragment(new QrFragment());
                     break;
-                case R.id.settings:
-                    //replaceFragment(new SettingsFragment());
-                        Intent intent = new Intent(this, LoginActivity.class);
-                        startActivity(intent);
+                case R.id.profile:
+                    if(TOKEN == null){
+                        replaceFragment(new LoginFragment());
+                    }else{
+                        replaceFragment(new ProfileFragment());
+                    }
                     break;
             }
             return true ;
         });
     }
+
     public void replaceFragment(Fragment fragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -133,14 +187,14 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
             options.setConnectionTimeout(10);
             options.setKeepAliveInterval(20);
 
-            Singleton.getInstance(getApplicationContext()).mqttClient = new MqttAndroidClient(this, "tcp://188.37.63.6:1883", "Cliente", Ack.AUTO_ACK);
+            Singleton.getInstance(getApplicationContext()).mqttClient = new MqttAndroidClient(this, "tcp://10.0.2.2:1883", "Cliente", Ack.AUTO_ACK);
             Singleton.getInstance(getApplicationContext()).mqttClient.connect(options, null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     try {
                         Singleton.getInstance(getApplicationContext()).mqttClient.subscribe("promo", 1);
-                    } catch (Exception e) {
-                        System.out.println("Error: " + e.getMessage());
+                    } catch (Exception ex) {
+                        System.out.println("Error: " + ex.getMessage());
                     }
                 }
 
