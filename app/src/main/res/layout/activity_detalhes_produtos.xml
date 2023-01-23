@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_gravity="start"
-                android:text="Product Name"
+                android:text="@string/txt_no_name"
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
@@ -45,14 +45,14 @@
             android:id="@+id/tvPrecoDetalhes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="$9.99"
+            android:text="@string/txt_no_value"
             android:textSize="20sp" />
 
         <TextView
             android:id="@+id/tvDescricao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Product Description"
+            android:text="@string/txt_no_description"
             android:textSize="16sp" />
 
     </LinearLayout>

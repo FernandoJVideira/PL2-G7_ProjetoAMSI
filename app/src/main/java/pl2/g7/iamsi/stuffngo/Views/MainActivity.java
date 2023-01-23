@@ -38,6 +38,7 @@ import pl2.g7.iamsi.stuffngo.Listeners.ProdutosListener;
 import pl2.g7.iamsi.stuffngo.Models.Produto;
 import pl2.g7.iamsi.stuffngo.Models.Singleton;
 import pl2.g7.iamsi.stuffngo.R;
+import pl2.g7.iamsi.stuffngo.Utils.AppJsonParser;
 import pl2.g7.iamsi.stuffngo.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity implements MqttListener {
@@ -53,6 +54,10 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
         this.menu = menu;
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.upper_nav_menu, menu);
+
+        if(!AppJsonParser.isConnectionInternet(this)){
+            menu.findItem(R.id.carrinho_icon).setVisible(false);
+        }
 
         SharedPreferences sharedPreferences = getSharedPreferences("SharedPreferences",MODE_PRIVATE);
         TOKEN = sharedPreferences.getString("Token", TOKEN);
@@ -105,8 +110,12 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
         Singleton.getInstance(this).setMqttListener(this);
 
         //Acess Shared Preferences and put the TOKEN as the shared Preference "Token"
-        SharedPreferences sharedPreferences = getSharedPreferences("SharedPreferences",MODE_PRIVATE);
-        TOKEN = sharedPreferences.getString("Token", TOKEN);
+        SharedPreferences sharedPreferences = getSharedPreferences("SharedPreferences", MODE_PRIVATE);
+        if(sharedPreferences.getString("Token", null) != null){
+            TOKEN = sharedPreferences.getString("Token", null);
+            Singleton.getInstance(this).setToken(TOKEN);
+            Singleton.getInstance(this).getUserDataAPI(this);
+        }
 
         //Binding
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -126,6 +135,10 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
                     replaceFragment(new QrFragment(this, MainActivity.this));
                     break;
                 case R.id.profile:
+                    if (!AppJsonParser.isConnectionInternet(this)){
+                        Toast.makeText(this, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
                     if(TOKEN == null){
                         replaceFragment(new LoginFragment());
                     }else{

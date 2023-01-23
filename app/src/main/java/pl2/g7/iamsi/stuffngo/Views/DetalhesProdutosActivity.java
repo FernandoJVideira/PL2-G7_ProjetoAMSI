@@ -23,6 +23,7 @@ import pl2.g7.iamsi.stuffngo.Models.Favorito;
 import pl2.g7.iamsi.stuffngo.Models.Produto;
 import pl2.g7.iamsi.stuffngo.R;
 import pl2.g7.iamsi.stuffngo.Models.Singleton;
+import pl2.g7.iamsi.stuffngo.Utils.AppJsonParser;
 import pl2.g7.iamsi.stuffngo.Utils.InputFilterMinMax;
 
 public class DetalhesProdutosActivity extends AppCompatActivity implements FavoritosListener {
@@ -58,12 +59,21 @@ public class DetalhesProdutosActivity extends AppCompatActivity implements Favor
         if(MainActivity.TOKEN != null)
             Singleton.getInstance(this).getAllFavoritosAPI(this);
         if(MainActivity.TOKEN == null){
-            btCart.setImageAlpha(75);
             btFav.setImageAlpha(75);
+            btFav.setEnabled(false);
+            btCart.setImageAlpha(75);
             btPlus.setImageAlpha(75);
             btMinus.setImageAlpha(75);
             btCart.setEnabled(false);
-            btFav.setEnabled(false);
+            btPlus.setEnabled(false);
+            btMinus.setEnabled(false);
+            etQuantidade.setEnabled(false);
+        }
+        if (!AppJsonParser.isConnectionInternet(this)){
+            btCart.setImageAlpha(75);
+            btPlus.setImageAlpha(75);
+            btMinus.setImageAlpha(75);
+            btCart.setEnabled(false);
             btPlus.setEnabled(false);
             btMinus.setEnabled(false);
             etQuantidade.setEnabled(false);

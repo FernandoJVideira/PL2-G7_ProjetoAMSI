@@ -43,7 +43,7 @@ public class MoradasFragment extends Fragment implements UserListener {
         View view = inflater.inflate(R.layout.fragment_moradas, container, false);
 
         lvMoradas = view.findViewById(R.id.lvMoradas);
-        lvMoradas.setAdapter(new ListaMoradasAdapter(getContext(), Singleton.getInstance(getContext()).getUser().getMoradas()));
+        lvMoradas.setAdapter(new ListaMoradasAdapter(getContext(), Singleton.getInstance(getContext()).getUser().getMoradasActivas()));
         fabAdd = view.findViewById(R.id.fabAddList);
         //Singleton.getInstance(getContext()).setUserListener(MoradasFragment.this);
         Singleton.getInstance(getContext()).getUserDataAPI(getContext());
@@ -72,7 +72,7 @@ public class MoradasFragment extends Fragment implements UserListener {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
         if (resultCode == Activity.RESULT_OK && requestCode == DETAILS) {
 
-            lvMoradas.setAdapter(new ListaMoradasAdapter(getContext(),Singleton.getInstance(getContext()).getUser().getMoradas()));
+            lvMoradas.setAdapter(new ListaMoradasAdapter(getContext(),Singleton.getInstance(getContext()).getUser().getMoradasActivas()));
 
             switch (intent.getIntExtra(MainActivity.OPERACAO, 0)) {
                 case MainActivity.EDIT:
@@ -90,8 +90,8 @@ public class MoradasFragment extends Fragment implements UserListener {
 
     @Override
     public void onRefreshUser(User user) {
-        if (!user.getMoradas().isEmpty()) {
-            lvMoradas.setAdapter(new ListaMoradasAdapter(getContext(), user.getMoradas()));
+        if (!user.getMoradasActivas().isEmpty()) {
+            lvMoradas.setAdapter(new ListaMoradasAdapter(getContext(), user.getMoradasActivas()));
         }
     }
 }

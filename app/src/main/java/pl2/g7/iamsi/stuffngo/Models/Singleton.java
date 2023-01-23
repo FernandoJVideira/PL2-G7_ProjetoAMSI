@@ -197,7 +197,7 @@ public class Singleton {
     public void loginAPI(final String username, final String password,  final Context context) {
         if(!AppJsonParser.isConnectionInternet(context))
         {
-            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
             return;
         }
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL_API + "/auth", null, new Response.Listener<JSONObject>() {
@@ -213,7 +213,7 @@ public class Singleton {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(context, "Falha ao tentar aceder ao servidor", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.txt_erro, Toast.LENGTH_SHORT).show();
                 System.out.println(error.getMessage());
             }
         }){
@@ -231,7 +231,7 @@ public class Singleton {
 
     public void getAllProdutosAPI(final Context context){
         if(!AppJsonParser.isConnectionInternet(context)){
-            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+            //Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
             if (produtosListener != null) {
                 produtosListener.onRefreshListaProdutos(getProdutosBD());
             }
@@ -249,7 +249,7 @@ public class Singleton {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(context, "Erro na ligação ao servidor", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, R.string.txt_erro, Toast.LENGTH_LONG).show();
                             System.out.println(error.getMessage() + "");
                         }
                     }
@@ -346,7 +346,7 @@ public class Singleton {
 
     public void getCarrinhoAPI(final Context context){
         if(!AppJsonParser.isConnectionInternet(context)){
-            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+            //Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
             if (carrinhoListener != null) {
                 carrinhoListener.onCarrinhoRefresh(getCarrinhoBD());
             }
@@ -387,7 +387,7 @@ public class Singleton {
 
     public void getAllSeccoesAPI(final Context context , final int id){
         if(!AppJsonParser.isConnectionInternet(context)){
-            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+            //Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
         }
         else {
             JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, URL_API + "/seccao/" + id,null, new Response.Listener<JSONArray>() {
@@ -401,7 +401,7 @@ public class Singleton {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(context, "Erro na ligação ao servidor", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, R.string.txt_erro, Toast.LENGTH_LONG).show();
                             System.out.println(error.getMessage() + "");
                         }
                     }
@@ -446,7 +446,7 @@ public class Singleton {
         SharedPreferences sharedPreferences = context.getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
         token = sharedPreferences.getString("Token", token);
         if(!AppJsonParser.isConnectionInternet(context)){
-            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+            //Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
             int id = 0;
             try {
                 id = favoritos.get(favoritos.size() - 1).getId();
@@ -477,7 +477,7 @@ public class Singleton {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Erro na ligação ao servidor", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, R.string.txt_erro, Toast.LENGTH_LONG).show();
                     System.out.println(error.getMessage() + "");
                 }
             });
@@ -487,7 +487,7 @@ public class Singleton {
 
     public void getAllFavoritosAPI(final Context context){
         if(!AppJsonParser.isConnectionInternet(context)){
-            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+            //Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
             favoritos = bdHelper.getAllFavoritosBD();
             if (favoritosListener != null) {
                 favoritosListener.onRefreshListaFavoritos(favoritos);
@@ -520,7 +520,7 @@ public class Singleton {
 
     public void removerFavoritoApi(final Context context, final Produto produto){
         if(!AppJsonParser.isConnectionInternet(context)){
-            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+            //Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
             bdHelper.removerFavoritoBD(produto);
             favoritos = bdHelper.getAllFavoritosBD();
             if (favoritosListener != null) {
@@ -547,7 +547,7 @@ public class Singleton {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Erro na ligação ao servidor", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, R.string.txt_erro, Toast.LENGTH_LONG).show();
                     System.out.println(error.getMessage() + "");
                 }
             });
@@ -575,6 +575,28 @@ public class Singleton {
         for (Loja loja : lojas) {
             bdHelper.adicionarLojaBD(loja);
         }
+    }
+
+    public void adicionarCupaoAPI(Context context, String cupao){
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, URL_API + "/promocao/" + cupao + "?auth_key=" + token, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                if(response.has("message") && response.optString("message").equals("Promocao not found"))
+                    Toast.makeText(context, R.string.txt_cupao_invalido, Toast.LENGTH_LONG).show();
+                else{
+                    carrinho = AppJsonParser.parserJsonCarrinho(response);
+                    if(carrinhoListener != null)
+                        carrinhoListener.onCarrinhoRefresh(carrinho);
+                    Toast.makeText(context, R.string.txt_cupao_valido, Toast.LENGTH_LONG).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(error.getMessage() + "");
+            }
+        });
+        requestQueue.add(req);
     }
 
     public void adicionarFavoritoBD(Favorito favorito) {
@@ -621,11 +643,11 @@ public class Singleton {
         // Create an Intent for the activity you want to start
         Random random = new Random();
         int id = random.nextInt(9999 - 1000) + 1000;
-        Intent intent = new Intent(context, MainActivity.class);//TODO: mudar para a activity das promos
+        Intent intent = new Intent(context, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
-        String channelId = "stuffngo";
+        String channelId = context.getString(R.string.app_name);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setContentTitle(title)
@@ -657,14 +679,14 @@ public class Singleton {
 
     public void getUserDataAPI(final Context context){
             if(!AppJsonParser.isConnectionInternet(context)){
-            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+            //Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
         }
         else {
             JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, URL_API + "/user" + "?auth_key=" + token,null, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             user = AppJsonParser.parserJsonUser(response);
-                            if (user != null) {
+                            if (user != null && userListener != null){
                                 userListener.onRefreshUser(user);
                             }
                         }},
@@ -683,7 +705,7 @@ public class Singleton {
     public void editarDadosAPI(final User user, final Context context){
 
         if(!AppJsonParser.isConnectionInternet(context)){
-            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
         }else{
 
             Map<String, String> params = new HashMap<>();
@@ -698,7 +720,7 @@ public class Singleton {
                 @Override
                 public void onResponse(JSONObject response) {
 
-                    Toast.makeText(context, "Utilizador editado com sucesso", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, R.string.txt_user_update, Toast.LENGTH_SHORT).show();
 
                     if(userListener != null){
                         userListener.onRefreshUser(user);
@@ -721,6 +743,10 @@ public class Singleton {
         }
     }
 
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     public void setMoradaListener(MoradaListener listener){
         this.moradasListener = listener;
     }
@@ -734,10 +760,10 @@ public class Singleton {
         return null;
     }
 
-    public void editarMoradaAPI(final Morada morada, final Context context, final String token){
+    public void editarMoradaAPI(final Morada morada, final Context context){
 
         if(!AppJsonParser.isConnectionInternet(context)){
-            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
         }else{
 
             Map<String, String> params = new HashMap<>();
@@ -775,7 +801,7 @@ public class Singleton {
     public void addMoradaAPI(final Morada morada, final Context context){
 
         if(!AppJsonParser.isConnectionInternet(context)){
-            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
         }else{
 
             Map<String, String> params = new HashMap<>();
@@ -811,7 +837,7 @@ public class Singleton {
 
     public void removerMoradaAPI(final Morada morada, final Context context){
         if(!AppJsonParser.isConnectionInternet(context)){
-            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
         }else{
             StringRequest request = new StringRequest(Request.Method.DELETE, URL_API + "/morada/" + morada.getId() + "?auth_key=" + token, new Response.Listener<String>() {
                 @Override
@@ -840,9 +866,9 @@ public class Singleton {
         this.encomendasListener = listener;
     }
 
-    public void getAllEncomendasAPI(final Context context, final String token){
+    public void getAllEncomendasAPI(final Context context){
         if(!AppJsonParser.isConnectionInternet(context)){
-            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+            //Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
         }
         else {
             JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, URL_API + "/encomenda" + "?auth_key=" + token,null, new Response.Listener<JSONArray>() {
@@ -879,9 +905,9 @@ public class Singleton {
     }
 
 
-    public void getFaturaAPI(int id, final Context context, final String token){
+    public void getFaturaAPI(int id, final Context context){
         if(!AppJsonParser.isConnectionInternet(context)){
-            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+            //Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
         }
         else {
             JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, URL_API + "/fatura/" + id + "?auth_key=" + token, null, new Response.Listener<JSONObject>() {

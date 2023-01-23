@@ -24,7 +24,7 @@
             android:layout_marginTop="50px"
             android:text="XX"
             android:textAlignment="center"
-            android:textSize="60sp" />
+            android:textSize="50sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -37,7 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="350px"
-                android:text="Cliente Atual :" />
+                android:text="@string/txt_cliente_atual" />
 
             <TextView
                 android:id="@+id/tvNumeroSenhaAtual"

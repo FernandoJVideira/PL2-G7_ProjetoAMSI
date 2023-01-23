@@ -59,7 +59,7 @@ public class DetalhesSeccaoActivity extends AppCompatActivity implements SenhaLi
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(DetalhesSeccaoActivity.this);
                 builder.setTitle(seccao.getNome())
-                        .setMessage(String.format("Deseja tirar senha para %s?", seccao.getNome()))
+                        .setMessage(String.format(getString(R.string.act_senha), seccao.getNome()))
                         .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import pl2.g7.iamsi.stuffngo.Models.Produto;
 import pl2.g7.iamsi.stuffngo.Models.Singleton;
 import pl2.g7.iamsi.stuffngo.R;
+import pl2.g7.iamsi.stuffngo.Utils.AppJsonParser;
 import pl2.g7.iamsi.stuffngo.Views.HomeFragment;
 import pl2.g7.iamsi.stuffngo.Views.MainActivity;
 
@@ -93,7 +94,7 @@ public class ListaProdutosAdapter extends BaseAdapter {
             tvPreco = view.findViewById(R.id.tvPreco);
             imgCapa = view.findViewById(R.id.imageView);
             btCart = view.findViewById(R.id.btCart);
-            if(MainActivity.TOKEN == null){
+            if(MainActivity.TOKEN == null || !AppJsonParser.isConnectionInternet(context)){
                 btCart.setImageAlpha(75);
                 btCart.setEnabled(false);
             }

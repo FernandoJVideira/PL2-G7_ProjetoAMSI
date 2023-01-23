@@ -18,6 +18,7 @@ import pl2.g7.iamsi.stuffngo.Adapters.ListaLinhasEncomendaAdapter;
 import pl2.g7.iamsi.stuffngo.Listeners.DetalhesEncomendaListener;
 import pl2.g7.iamsi.stuffngo.Models.Encomenda;
 import pl2.g7.iamsi.stuffngo.Models.Singleton;
+import pl2.g7.iamsi.stuffngo.R;
 import pl2.g7.iamsi.stuffngo.databinding.ActivityDetalhesEncomendaBinding;
 
 public class DetalhesEncomendaActivity extends AppCompatActivity implements DetalhesEncomendaListener {
@@ -38,13 +39,13 @@ public class DetalhesEncomendaActivity extends AppCompatActivity implements Deta
 
         encomenda = Singleton.getInstance(this).getEncomenda(idEncomenda);
 
+        Singleton.getInstance(DetalhesEncomendaActivity.this).setDetalhesEncomendaListener(this);
         if(encomenda.getEstado().equals("emProcessamento")){
             binding.fabDownload.setVisibility(View.INVISIBLE);
-        };
 
-        Singleton.getInstance(DetalhesEncomendaActivity.this).setDetalhesEncomendaListener(this);
-        Singleton.getInstance(DetalhesEncomendaActivity.this).getFaturaAPI(encomenda.getId(), this, "w9MY9udTVVlUX_xyIjoHfG7JDt2q0ji7");
-
+        }else{
+            Singleton.getInstance(DetalhesEncomendaActivity.this).getFaturaAPI(encomenda.getId(), this);
+        }
         binding.tvIdEncomenda.setText(String.valueOf(encomenda.getId()));
         binding.tvEstado.setText(encomenda.getEstado());
         binding.tvDataEncomenda.setText(encomenda.getData());
@@ -67,7 +68,7 @@ public class DetalhesEncomendaActivity extends AppCompatActivity implements Deta
                         decoder = Base64.getDecoder().decode(fatura);
                     }
                     fos.write(decoder);
-                    Toast.makeText(DetalhesEncomendaActivity.this, "Fatura Salva!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetalhesEncomendaActivity.this, R.string.txt_fatura_saved, Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

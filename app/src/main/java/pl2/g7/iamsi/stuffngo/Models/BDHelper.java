@@ -79,6 +79,7 @@ public class BDHelper extends SQLiteOpenHelper {
                 CIDADE + " TEXT NOT NULL," +
                 COD_POSTAL + " TEXT NOT NULL," +
                 PAIS + " TEXT NOT NULL," +
+                "estado INTEGER(1) NOT NULL," +
                 "PRIMARY KEY ("+IDMORADA+"));";
         db.execSQL(sql);
 

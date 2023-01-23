@@ -204,8 +204,9 @@ public class AppJsonParser {
                 String cidade = moradaJSON.getString("cidade");
                 String codigoPostal = moradaJSON.getString("cod_postal");
                 String pais = moradaJSON.getString("pais");
+                boolean activa = moradaJSON.getInt("estado") > 0;
 
-                moradas.add(new Morada(idMorada, rua, cidade, codigoPostal, pais));
+                moradas.add(new Morada(idMorada, rua, cidade, codigoPostal, pais, activa));
             }
 
             user = new User(username, nome, email, nif, telemovel, moradas);

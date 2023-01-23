@@ -65,6 +65,17 @@ public User( String username, String nome, String email, String nif, String tele
     public ArrayList<Morada> getMoradas() {
         return moradas;
     }
+    public ArrayList<Morada> getMoradasActivas() {
+        ArrayList<Morada> moradasActivas = new ArrayList<>();
+        for (Morada m : moradas) {
+            if (m.isActive()) {
+                moradasActivas.add(m);
+            }
+        }
+        return moradasActivas;
+    }
+
+
 
 
 }

@@ -27,7 +27,7 @@ public class EncomendaActivity extends AppCompatActivity implements EncomendasLi
 
         binding.lvEncomendas.setAdapter(new ListaEncomendasAdapter(this, new ArrayList<Encomenda>()));
         Singleton.getInstance(this).setEncomendasListener(this);
-        Singleton.getInstance(this).getAllEncomendasAPI(this, "w9MY9udTVVlUX_xyIjoHfG7JDt2q0ji7");
+        Singleton.getInstance(this).getAllEncomendasAPI(this);
 
         binding.lvEncomendas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

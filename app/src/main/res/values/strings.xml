@@ -3,6 +3,7 @@
 
     <string name="app_name">StuffNGo</string>
     <string name="act_produto">Detalhes: %1$s</string>
+    <string name="act_senha">Deseja tirar senha para %1$s?</string>
     <string name="home">Home</string>
     <string name="qr">QR</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -48,4 +49,36 @@
     <string name="txtMorada">Morada:</string>
     <string name="Nome_Linha">Nome :</string>
     <string name="Qunatidade_Linha">Quantidade :</string>
+    <string name="txt_remover_produto">Remover Produto</string>
+    <string name="txt_remover_produto_question">Deseja remover o produto?</string>
+    <string name="txt_sim">Sim</string>
+    <string name="QUANTIDADE">quantidade</string>
+    <string name="txt_erro">Falha ao tentar aceder ao servidor</string>
+    <string name="txt_cupao_valido">Cupão adicionado com sucesso</string>
+    <string name="txt_cupao_invalido">Cupão Inválido</string>
+    <string name="txt_user_update">Utilizador editado com sucesso</string>
+    <string name="txt_lojas">Escolha a loja onde quer fazer o levantamento</string>
+    <string name="txt_no_moradas">Não tem moradas activas</string>
+    <string name="txt_cupao">Introduza o código do cupão</string>
+    <string name="txt_ok">Ok</string>
+    <string name="txt_rua_error">Rua Invalida</string>
+    <string name="txt_cidade_error">Cidade Inválida</string>
+    <string name="txt_cod_postal_error">Código Postal Inválido</string>
+    <string name="txt_pais_error">País Inválido</string>
+    <string name="txt_fatura_saved">Fatura guardada!</string>
+    <string name="txt_produto_rem">Produto removido</string>
+    <string name="txt_produto_add">Produto adicionado</string>
+    <string name="txt_cart_updated">Carrinho actualizado</string>
+    <string name="txt_compra_concluida">Compra concluida com sucesso!</string>
+    <string name="txt_empty_cart">A sua encomenda foi concluida com sucesso!</string>
+    <string name="txt_sub_total">Sub-total:</string>
+    <string name="txt_no_value">$0.00</string>
+    <string name="txt_iva">Iva:</string>
+    <string name="txt_desconto">Desconto:</string>
+    <string name="txt_total">Total:</string>
+    <string name="txt_checkout">Checkout</string>
+    <string name="txt_linhas_da_encomenda">Linhas da Encomenda:</string>
+    <string name="txt_no_name">Product Name</string>
+    <string name="txt_no_description">Product Description</string>
+    <string name="txt_cliente_atual">Cliente Atual :</string>
 </resources>

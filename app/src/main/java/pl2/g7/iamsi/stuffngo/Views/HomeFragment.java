@@ -61,7 +61,8 @@ public class HomeFragment extends Fragment implements ProdutosListener {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.menu_pesquisa, menu);
-        inflater.inflate(R.menu.menu_favoritos, menu);
+        if(MainActivity.TOKEN != null)
+            inflater.inflate(R.menu.menu_favoritos, menu);
 
         MenuItem itemPesquisa = menu.findItem(R.id.search_icon);
         MenuItem itemFavoritos = menu.findItem(R.id.favoritos);
@@ -85,24 +86,25 @@ public class HomeFragment extends Fragment implements ProdutosListener {
             }
         });
 
-        itemFavoritos.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                ArrayList<Favorito> favoritos = Singleton.getInstance(getContext()).getFavoritosBD();
-                ArrayList<Produto> produtos = Singleton.getInstance(getContext()).getProdutosBD();
-                ArrayList<Produto> listaTemp = new ArrayList<>();
-                for (Favorito f : favoritos) {
-                    for (Produto p : produtos) {
-                        if (f.getId_produto() == p.getId()) {
-                            listaTemp.add(p);
+        if(itemFavoritos != null)
+            itemFavoritos.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    ArrayList<Favorito> favoritos = Singleton.getInstance(getContext()).getFavoritosBD();
+                    ArrayList<Produto> produtos = Singleton.getInstance(getContext()).getProdutosBD();
+                    ArrayList<Produto> listaTemp = new ArrayList<>();
+                    for (Favorito f : favoritos) {
+                        for (Produto p : produtos) {
+                            if (f.getId_produto() == p.getId()) {
+                                listaTemp.add(p);
+                            }
                         }
                     }
+                    lvProdutos.setAdapter(new ListaProdutosAdapter(getContext(), listaTemp, HomeFragment.this));
+                    getActivity().setTitle("Favoritos");
+                    return true;
                 }
-                lvProdutos.setAdapter(new ListaProdutosAdapter(getContext(), listaTemp, HomeFragment.this));
-                getActivity().setTitle("Favoritos");
-                return true;
-            }
-        });
+            });
 
         super.onCreateOptionsMenu(menu, inflater);
     }

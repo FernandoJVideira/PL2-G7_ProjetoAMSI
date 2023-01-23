@@ -79,9 +79,9 @@ public class ListaCarrinhoAdapter extends BaseAdapter {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                builder.setTitle("Remover produto")
-                        .setMessage("Deseja remover o produto?")
-                        .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                builder.setTitle(R.string.txt_remover_produto)
+                        .setMessage(R.string.txt_remover_produto_question)
+                        .setPositiveButton(R.string.txt_sim, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Singleton.getInstance(context).delProdutoCarrinhoAPI(item.getIdProduto());
@@ -92,7 +92,7 @@ public class ListaCarrinhoAdapter extends BaseAdapter {
                                 }
                             }
                         })
-                        .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 // do nothing

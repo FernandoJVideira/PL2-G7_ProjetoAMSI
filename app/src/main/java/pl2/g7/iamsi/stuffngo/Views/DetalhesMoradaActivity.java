@@ -51,7 +51,7 @@ public class DetalhesMoradaActivity extends AppCompatActivity implements MoradaL
         Singleton.getInstance(this).setMoradaListener(this);
 
         user = Singleton.getInstance(getApplicationContext()).getUser();
-        moradas = user.getMoradas();
+        moradas = user.getMoradasActivas();
 
         int pos = getIntent().getIntExtra(POS, -1);
 
@@ -86,7 +86,7 @@ public class DetalhesMoradaActivity extends AppCompatActivity implements MoradaL
                     }
                     else
                     {
-                        morada = new Morada(0, rua, cidade, codPostal, pais);
+                        morada = new Morada(0, rua, cidade, codPostal, pais, true);
                         Singleton.getInstance(getApplicationContext()).addMoradaAPI(morada, getApplicationContext());
                     }
 
@@ -120,23 +120,23 @@ public class DetalhesMoradaActivity extends AppCompatActivity implements MoradaL
         String pais = binding.etPais.getText().toString();
 
         if (rua.length() < MIN_CHAR) {
-            binding.etRua.setError("Rua Invalida");
+            binding.etRua.setError(getString(R.string.txt_rua_error));
             return false;
         }
         if (cidade.length() < MIN_CHAR) {
-            binding.etCidade.setError("Cidade Inválida");
+            binding.etCidade.setError(getString(R.string.txt_cidade_error));
             return false;
         }
         if (codPostal.length() < MIN_COD_POSTAL) {
-            binding.etCodPostal.setError("Código Postal Inválido");
+            binding.etCodPostal.setError(getString(R.string.txt_cod_postal_error));
             return false;
         }else if (!codPostal.matches("[1-9][0-9]{3}-[0-9]{3}")) {
-            binding.etCodPostal.setError("Código Postal Inválido");
+            binding.etCodPostal.setError(getString(R.string.txt_cod_postal_error));
             return false;
         }
 
         if (pais.length() < MIN_CHAR) {
-            binding.etPais.setError("País Inválido");
+            binding.etPais.setError(getString(R.string.txt_pais_error));
             return false;
         }
         return true;
