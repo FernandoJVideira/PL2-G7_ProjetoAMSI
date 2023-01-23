@@ -255,7 +255,7 @@ public class BDHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(TABLE_PRODUTOS, new String[]{IDPRODUTO, NOME, DESCRICAO, PRECO, IDCATEGORIA, IMAGEM}, null, null, null, null, null);
         if(cursor.moveToFirst()) {
             do {
-                Produto produto = new Produto(cursor.getInt(0), cursor.getInt(3), cursor.getInt(4), cursor.getString(1), cursor.getString(2), cursor.getString(5));
+                Produto produto = new Produto(cursor.getInt(0), cursor.getDouble(3), cursor.getInt(4), cursor.getString(1), cursor.getString(2), cursor.getString(5));
                 produtos.add(produto);
             } while (cursor.moveToNext());
             cursor.close();

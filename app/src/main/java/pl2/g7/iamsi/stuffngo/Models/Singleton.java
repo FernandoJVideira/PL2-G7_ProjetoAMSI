@@ -77,8 +77,8 @@ public class Singleton {
     public EncomendasListener encomendasListener = null;
     private MqttListener mqttListener = null;
     private CarrinhoListener carrinhoListener = null;
-    private static final String IP = "10.0.2.2:8081";
-    public static final String URL = "http://"+ IP; //+"/PL2-G7_ProjetoPlatSI";
+    private static final String IP = "10.0.2.2";
+    public static final String URL = "http://"+ IP +"/PL2-G7_ProjetoPlatSI";
     private static final String URL_API = URL + "/backend/web/api";
     public MqttAndroidClient mqttClient;
     private String token;
@@ -446,8 +446,16 @@ public class Singleton {
         token = sharedPreferences.getString("Token", token);
         if(!AppJsonParser.isConnectionInternet(context)){
             Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+            int id = 0;
+            try {
+                id = favoritos.get(favoritos.size() - 1).getId();
+            } catch (Exception ignored) {
+            }
+            Favorito favorito = new Favorito(id + 1, produto.getId());
+            bdHelper.adicionarFavoritoBD(favorito);
+            favoritos = bdHelper.getAllFavoritosBD();
             if (favoritosListener != null) {
-                favoritosListener.onRefreshListaFavoritos(getFavoritosBD());
+                favoritosListener.onRefreshListaFavoritos(favoritos);
             }
         }
         else {
@@ -479,8 +487,9 @@ public class Singleton {
     public void getAllFavoritosAPI(final Context context){
         if(!AppJsonParser.isConnectionInternet(context)){
             Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+            favoritos = bdHelper.getAllFavoritosBD();
             if (favoritosListener != null) {
-                favoritosListener.onRefreshListaFavoritos(getFavoritosBD());
+                favoritosListener.onRefreshListaFavoritos(favoritos);
             }
         }
         else {
@@ -511,6 +520,11 @@ public class Singleton {
     public void removerFavoritoApi(final Context context, final Produto produto){
         if(!AppJsonParser.isConnectionInternet(context)){
             Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+            bdHelper.removerFavoritoBD(produto);
+            favoritos = bdHelper.getAllFavoritosBD();
+            if (favoritosListener != null) {
+                favoritosListener.onRefreshListaFavoritos(favoritos);
+            }
         }
         else {
             JsonObjectRequest req = new JsonObjectRequest(Request.Method.DELETE, URL_API + "/favorito/" + produto.getId() + "?auth_key=" + token, null, new Response.Listener<JSONObject>() {
