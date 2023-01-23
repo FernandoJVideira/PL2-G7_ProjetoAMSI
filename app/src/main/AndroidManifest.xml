@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-feature android:name="android.hardware.camera.any" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -16,9 +21,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StuffNGo"
         android:usesCleartextTraffic="true"
+        android:requestLegacyExternalStorage="true"
         tools:targetApi="31">
         <activity
+            android:name=".Views.DetalhesEncomendaActivity"
+            android:parentActivityName=".Views.DetalhesEncomendaActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".Views.EncomendaActivity"
+            android:parentActivityName=".Views.MainActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -27,7 +42,7 @@
         <activity
             android:name=".Views.CarrinhoActivity"
             android:exported="false"
-            android:parentActivityName=".Views.MainActivity"/>
+            android:parentActivityName=".Views.MainActivity" />
         <activity
             android:name=".Views.DetalhesMoradaActivity"
             android:exported="false">
@@ -67,8 +82,12 @@
 
             <meta-data
                 android:name="android.app.lib_name"
-                android:value=".MainActivity" />
+                android:value=".MainActivity"
+                />
         </activity>
+        <meta-data
+            android:name="com.google.android.gms.vision.DEPENDENCIES"
+            android:value="barcode" />
     </application>
 
 </manifest>

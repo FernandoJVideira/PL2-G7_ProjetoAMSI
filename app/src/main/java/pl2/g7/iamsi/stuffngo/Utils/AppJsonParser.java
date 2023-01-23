@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import pl2.g7.iamsi.stuffngo.Models.Carrinho;
+import pl2.g7.iamsi.stuffngo.Models.Encomenda;
 import pl2.g7.iamsi.stuffngo.Models.Favorito;
 import pl2.g7.iamsi.stuffngo.Models.LinhaCarrinho;
 import pl2.g7.iamsi.stuffngo.Models.Loja;
@@ -215,23 +216,59 @@ public class AppJsonParser {
         return user;
     }
 
-    public static Morada parserJsonMorada(JSONObject response) {
-        Morada morada = null;
+    public static ArrayList<Encomenda> parserEncomendasJson(JSONArray response) {
+        ArrayList<Encomenda> encomenda = new ArrayList<>();
+        Encomenda encomendaAux = null;
+        ArrayList<LinhaCarrinho> linhas = new ArrayList<>();
 
-        try {
-            JSONObject moradaJSON = response.getJSONObject("morada");
+        for(int i = 0; i < response.length(); i++){
+            try {
+                JSONObject respObj = (JSONObject) response.get(i);
 
-            int idMorada = moradaJSON.getInt("idMorada");
-            String rua = moradaJSON.getString("rua");
-            String cidade = moradaJSON.getString("cidade");
-            String codigoPostal = moradaJSON.getString("cod_postal");
-            String pais = moradaJSON.getString("pais");
+                if (!respObj.has("encomenda") || !respObj.has("linhas")) {
+                    return null;
+                }
 
-            morada = new Morada(idMorada, rua, cidade, codigoPostal, pais);
+                JSONObject encomendaJson = respObj.getJSONObject("encomenda");
+                JSONArray linhasJson = respObj.getJSONArray("linhas");
+
+                int id = encomendaJson.getInt("idCarrinho");
+                String estado = encomendaJson.getString("estado");
+                String data = encomendaJson.getString("data_criacao");
+                int idMorada = encomendaJson.getInt("id_morada");
+                int idLoja = encomendaJson.getInt("id_loja");
+
+                linhas = new ArrayList<>();
+                for (int j = 0; j < linhasJson.length(); j++) {
+
+                    JSONObject linhaJSON = linhasJson.getJSONObject(j);
+
+                    int idLinha = linhaJSON.getInt("idLinha");
+                    int quantidade = linhaJSON.getInt("quantidade");
+                    int idProduto = linhaJSON.getInt("id_produto");
+
+                    linhas.add(new LinhaCarrinho(idLinha, id, idProduto, quantidade));
+                }
+
+                encomendaAux = new Encomenda(id, idMorada, idLoja, estado, data, linhas);
+                encomenda.add(encomendaAux);
         }
         catch (Exception e) {
             e.printStackTrace();
         }
-        return morada;
+    }
+        return encomenda;
+    }
+
+    public static String parserFaturaJson(JSONObject response) {
+
+        String fatura = null;
+        try {
+            fatura = response.getString("fatura");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return fatura;
     }
 }

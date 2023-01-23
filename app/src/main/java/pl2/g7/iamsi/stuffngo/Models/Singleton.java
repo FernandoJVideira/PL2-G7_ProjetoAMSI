@@ -42,6 +42,8 @@ import java.util.Random;
 
 import info.mqtt.android.service.MqttAndroidClient;
 import pl2.g7.iamsi.stuffngo.Listeners.CarrinhoListener;
+import pl2.g7.iamsi.stuffngo.Listeners.DetalhesEncomendaListener;
+import pl2.g7.iamsi.stuffngo.Listeners.EncomendasListener;
 import pl2.g7.iamsi.stuffngo.Listeners.FavoritosListener;
 import pl2.g7.iamsi.stuffngo.Listeners.LoginListener;
 import pl2.g7.iamsi.stuffngo.Listeners.LojasListener;
@@ -71,7 +73,9 @@ public class Singleton {
     private LojasListener lojasListener = null;
     public SenhaListener senhaListener = null;
     public UserListener userListener = null;
+    public DetalhesEncomendaListener detalhesEncomendaListener = null;
     public MoradaListener moradasListener = null;
+    public EncomendasListener encomendasListener = null;
     private MqttListener mqttListener = null;
     private CarrinhoListener carrinhoListener = null;
     private static final String IP = "10.0.2.2";
@@ -81,7 +85,9 @@ public class Singleton {
     private String token;
     private String USERNAME = null;
     private User user;
+    private ArrayList<Encomenda> encomendas;
     private String SENHA = null;
+    private String fatura;
 
     public static synchronized Singleton getInstance(Context context) {
         if (INSTANCE == null) {
@@ -441,8 +447,16 @@ public class Singleton {
         token = sharedPreferences.getString("Token", token);
         if(!AppJsonParser.isConnectionInternet(context)){
             Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+            int id = 0;
+            try {
+                id = favoritos.get(favoritos.size() - 1).getId();
+            } catch (Exception ignored) {
+            }
+            Favorito favorito = new Favorito(id + 1, produto.getId());
+            bdHelper.adicionarFavoritoBD(favorito);
+            favoritos = bdHelper.getAllFavoritosBD();
             if (favoritosListener != null) {
-                favoritosListener.onRefreshListaFavoritos(getFavoritosBD());
+                favoritosListener.onRefreshListaFavoritos(favoritos);
             }
         }
         else {
@@ -474,8 +488,9 @@ public class Singleton {
     public void getAllFavoritosAPI(final Context context){
         if(!AppJsonParser.isConnectionInternet(context)){
             Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+            favoritos = bdHelper.getAllFavoritosBD();
             if (favoritosListener != null) {
-                favoritosListener.onRefreshListaFavoritos(getFavoritosBD());
+                favoritosListener.onRefreshListaFavoritos(favoritos);
             }
         }
         else {
@@ -506,6 +521,11 @@ public class Singleton {
     public void removerFavoritoApi(final Context context, final Produto produto){
         if(!AppJsonParser.isConnectionInternet(context)){
             Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+            bdHelper.removerFavoritoBD(produto);
+            favoritos = bdHelper.getAllFavoritosBD();
+            if (favoritosListener != null) {
+                favoritosListener.onRefreshListaFavoritos(favoritos);
+            }
         }
         else {
             JsonObjectRequest req = new JsonObjectRequest(Request.Method.DELETE, URL_API + "/favorito/" + produto.getId() + "?auth_key=" + token, null, new Response.Listener<JSONObject>() {
@@ -705,7 +725,16 @@ public class Singleton {
         this.moradasListener = listener;
     }
 
-    public void editarMoradaAPI(final Morada morada, final Context context){
+    public Morada getMorada(int id){
+        for(Morada m : user.getMoradas()){
+            if(m.getId() == id){
+                return m;
+            }
+        }
+        return null;
+    }
+
+    public void editarMoradaAPI(final Morada morada, final Context context, final String token){
 
         if(!AppJsonParser.isConnectionInternet(context)){
             Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_SHORT).show();
@@ -800,6 +829,79 @@ public class Singleton {
             });
 
             requestQueue.add(request);
+        }
+    }
+
+    //endregion
+
+    //region Encomenda
+
+    public void setEncomendasListener(EncomendasListener listener){
+        this.encomendasListener = listener;
+    }
+
+    public void getAllEncomendasAPI(final Context context, final String token){
+        if(!AppJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+        }
+        else {
+            JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, URL_API + "/encomenda" + "?auth_key=" + token,null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    encomendas = AppJsonParser.parserEncomendasJson(response);
+                    if (encomendasListener != null) {
+                        encomendasListener.onRefreshListaEncomendas(encomendas);
+                    }
+                }},
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(context, error.getMessage()+ "", Toast.LENGTH_LONG).show();
+                        }
+                    }
+            );
+
+            requestQueue.add(req);
+        }
+    }
+
+    public Encomenda getEncomenda(int id){
+        for(Encomenda e : encomendas){
+            if(e.getId() == id){
+                return e;
+            }
+        }
+        return null;
+    }
+
+    public void setDetalhesEncomendaListener(DetalhesEncomendaListener listener){
+        this.detalhesEncomendaListener = listener;
+    }
+
+
+    public void getFaturaAPI(int id, final Context context, final String token){
+        if(!AppJsonParser.isConnectionInternet(context)){
+            Toast.makeText(context, "Sem ligação à internet", Toast.LENGTH_LONG).show();
+        }
+        else {
+            JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, URL_API + "/fatura/" + id + "?auth_key=" + token, null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    fatura = AppJsonParser.parserFaturaJson(response);
+
+                    if (detalhesEncomendaListener != null) {
+                        detalhesEncomendaListener.onRefreshDetalhesEncomenda(fatura);
+                    }
+                }},
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(context, error.getMessage()+ "", Toast.LENGTH_LONG).show();
+                        }
+                    }
+            );
+
+            requestQueue.add(req);
         }
     }
 

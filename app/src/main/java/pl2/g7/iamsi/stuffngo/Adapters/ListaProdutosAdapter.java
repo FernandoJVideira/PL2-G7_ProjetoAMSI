@@ -29,6 +29,20 @@ public class ListaProdutosAdapter extends BaseAdapter {
         this.produtos = produtos;
         this.homeFragment = homeFragment;
         layoutInflater = LayoutInflater.from(context);
+        try {
+            TextView tvNoProducts = homeFragment.getView().findViewById(R.id.tvNenhumProduto);
+
+            if(produtos.size() == 0) {
+                tvNoProducts.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                tvNoProducts.setVisibility(View.GONE);
+            }
+        }
+        catch (Exception e) {
+        }
+
     }
 
     @Override

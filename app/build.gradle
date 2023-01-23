@@ -3,12 +3,12 @@ plugins {
 }
 allprojects {
     repositories {
+        google()
+        mavenCentral()
         maven { url "https://jitpack.io" }
         maven {
             url "https://repo.eclipse.org/content/repositories/paho-snapshots/"
         }
-        google()
-        mavenCentral()
     }
 }
 android {
@@ -17,7 +17,7 @@ android {
 
     defaultConfig {
         applicationId "pl2.g7.iamsi.stuffngo"
-        minSdk 23
+        minSdk 26
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -60,10 +60,9 @@ dependencies {
     implementation 'com.mikhaellopez:circularimageview:4.3.1'
     implementation 'com.github.arcadefire:nice-spinner:1.4.4'
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0'
-    //implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.github.hannesa2:paho.mqtt.android:3.3.5'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0'
     implementation 'com.mikhaellopez:circularimageview:4.3.1'
-
+    implementation 'com.google.android.gms:play-services-vision:11.8.0'
 }

@@ -5,19 +5,26 @@
     android:layout_height="match_parent"
     tools:context=".Views.QrFragment">
 
-    <LinearLayout
+    <SurfaceView
+        android:id="@+id/surfaceView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#1BBD9017"
-        android:orientation="vertical">
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/txtBarcodeValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:layout_gravity="center_horizontal"
+        android:textSize="20sp" />
 
 
-        <Button
-            android:id="@+id/btnScan"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Button"
-            android:textAlignment="center" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/btnAction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="VER DETALHES DO PRODUTO"
+        android:layout_gravity="bottom"
+        />
 
 </FrameLayout>

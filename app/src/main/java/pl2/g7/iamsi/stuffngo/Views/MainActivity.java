@@ -1,5 +1,7 @@
 package pl2.g7.iamsi.stuffngo.Views;
 
+import static java.security.AccessController.getContext;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -12,6 +14,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -24,12 +27,15 @@ import org.json.JSONObject;
 import info.mqtt.android.service.Ack;
 import info.mqtt.android.service.MqttAndroidClient;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import info.mqtt.android.service.Ack;
 import info.mqtt.android.service.MqttAndroidClient;
 import pl2.g7.iamsi.stuffngo.Listeners.LoginListener;
 import pl2.g7.iamsi.stuffngo.Listeners.MqttListener;
+import pl2.g7.iamsi.stuffngo.Listeners.ProdutosListener;
+import pl2.g7.iamsi.stuffngo.Models.Produto;
 import pl2.g7.iamsi.stuffngo.Models.Singleton;
 import pl2.g7.iamsi.stuffngo.R;
 import pl2.g7.iamsi.stuffngo.databinding.ActivityMainBinding;
@@ -37,6 +43,7 @@ import pl2.g7.iamsi.stuffngo.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity implements MqttListener {
     private ActivityMainBinding binding;
     private Menu menu;
+    private SearchView searchView;
     public static String TOKEN = null;
     public static final String OPERACAO = "OP";
     public static final int EDIT = 10, ADD = 20, DELETE = 30;
@@ -46,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
         this.menu = menu;
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.upper_nav_menu, menu);
+
         SharedPreferences sharedPreferences = getSharedPreferences("SharedPreferences",MODE_PRIVATE);
         TOKEN = sharedPreferences.getString("Token", TOKEN);
         if(TOKEN == null){
@@ -62,9 +70,6 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.search_icon:
-                Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
-               return true;
             case R.id.carrinho_icon:
                     Intent intent = new Intent(this, CarrinhoActivity.class);
                     startActivity(intent);
@@ -118,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
                     replaceFragment(new SenhaFragment());
                     break;
                 case R.id.qr:
-                    replaceFragment(new QrFragment());
+                    replaceFragment(new QrFragment(this, MainActivity.this));
                     break;
                 case R.id.profile:
                     if(TOKEN == null){
@@ -133,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
     }
 
     public void replaceFragment(Fragment fragment){
+        this.setTitle("StuffNGo");
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, fragment);

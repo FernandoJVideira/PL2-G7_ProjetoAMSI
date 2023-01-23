@@ -65,4 +65,6 @@ public User( String username, String nome, String email, String nif, String tele
     public ArrayList<Morada> getMoradas() {
         return moradas;
     }
+
+
 }
