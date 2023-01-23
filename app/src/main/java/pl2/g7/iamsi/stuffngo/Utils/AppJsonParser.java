@@ -237,7 +237,6 @@ public class AppJsonParser {
                 String data = encomendaJson.getString("data_criacao");
                 int idMorada = encomendaJson.getInt("id_morada");
                 int idLoja = encomendaJson.getInt("id_loja");
-                //int idPromocao = encomendaJson.getInt("id_promocao");
 
                 for (int j = 0; j < linhasJson.length(); j++) {
 
@@ -257,47 +256,6 @@ public class AppJsonParser {
             e.printStackTrace();
         }
     }
-        return encomenda;
-    }
-
-    public static Encomenda parserEncomendaJson(JSONObject response) {
-
-        Encomenda encomenda = null;
-        ArrayList<LinhaCarrinho> linhas = new ArrayList<>();
-
-        try {
-
-            if (!response.has("encomenda") || !response.has("linhas")) {
-                return null;
-            }
-
-            JSONObject encomendaJson = response.getJSONObject("encomenda");
-            JSONArray linhasJson = response.getJSONArray("linhas");
-
-            int id = encomendaJson.getInt("idCarrinho");
-            String estado = encomendaJson.getString("estado");
-            String data = encomendaJson.getString("data_criacao");
-            int idMorada = encomendaJson.getInt("id_morada");
-            int idLoja = encomendaJson.getInt("id_loja");
-            //int idPromocao = encomendaJson.getInt("id_promocao");
-
-            for (int j = 0; j < linhasJson.length(); j++) {
-
-                JSONObject linhaJSON = linhasJson.getJSONObject(j);
-
-                int idLinha = linhaJSON.getInt("idLinha");
-                int quantidade = linhaJSON.getInt("quantidade");
-                int idProduto = linhaJSON.getInt("id_produto");
-
-                linhas.add(new LinhaCarrinho(idLinha, id, idProduto, quantidade));
-            }
-
-            encomenda = new Encomenda(id, idMorada, idLoja, estado, data, linhas);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-
         return encomenda;
     }
 

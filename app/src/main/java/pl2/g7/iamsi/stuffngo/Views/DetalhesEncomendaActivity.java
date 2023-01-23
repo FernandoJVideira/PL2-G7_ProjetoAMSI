@@ -56,9 +56,7 @@ public class DetalhesEncomendaActivity extends AppCompatActivity implements Deta
                 try (FileOutputStream fos = new FileOutputStream(file); ) {
                     // To be short I use a corrupted PDF string, so make sure to use a valid one if you want to preview the PDF file
                     byte[] decoder = new byte[0];
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                        decoder = Base64.getDecoder().decode(fatura);
-                    }
+                    decoder = Base64.getDecoder().decode(fatura);
                     fos.write(decoder);
                     Toast.makeText(DetalhesEncomendaActivity.this, "Fatura Salva!", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {

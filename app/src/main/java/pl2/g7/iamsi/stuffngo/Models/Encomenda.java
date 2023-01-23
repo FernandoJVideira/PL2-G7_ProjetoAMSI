@@ -4,15 +4,14 @@ import java.util.ArrayList;
 
 public class Encomenda {
 
-    private int id, idMorada, idLoja; //idPromocao;
+    private int id, idMorada, idLoja;
     private String estado, data;
     private ArrayList<LinhaCarrinho> linhas;
 
-    public Encomenda(int id, int idMorada, int idLoja, /*int idPromocao,*/ String estado, String data, ArrayList<LinhaCarrinho> linhas) {
+    public Encomenda(int id, int idMorada, int idLoja, String estado, String data, ArrayList<LinhaCarrinho> linhas) {
         this.id = id;
         this.idMorada = idMorada;
         this.idLoja = idLoja;
-        //this.idPromocao = idPromocao;
         this.estado = estado;
         this.data = data;
         this.linhas = linhas;
@@ -29,10 +28,6 @@ public class Encomenda {
     public int getIdLoja() {
         return idLoja;
     }
-
-    /*public int getIdPromocao() {
-        return idPromocao;
-    }*/
 
     public String getEstado() {
         return estado;
