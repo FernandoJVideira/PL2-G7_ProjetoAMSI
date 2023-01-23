@@ -41,7 +41,7 @@ public class ProfileFragment extends Fragment implements UserListener {
         txtTelemovel = view.findViewById(R.id.txtTel);
         txtMorada = view.findViewById(R.id.txtMorada);
         txtPerfil = view.findViewById(R.id.txtPerfil);
-        txtPassword = view.findViewById(R.id.txtPassword);
+        txtPassword = view.findViewById(R.id.txtEncomendas);
 
         Singleton.getInstance(getContext()).setUserListener(this);
         Singleton.getInstance(getContext()).getUserDataAPI(getContext());
@@ -66,6 +66,15 @@ public class ProfileFragment extends Fragment implements UserListener {
             @Override
             public void onClick(View v) {
                 replaceFragment(new MoradasFragment());
+            }
+        });
+
+        txtPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent = new Intent(getContext(), EncomendaActivity.class);
+                startActivity(intent);
             }
         });
 

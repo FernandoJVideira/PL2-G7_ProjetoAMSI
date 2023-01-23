@@ -12,10 +12,7 @@
         android:icon="@drawable/ic_carrinho_white_foreground"
         android:title="@string/carrinho_nav"
         app:showAsAction="always"/>
-    <item
-        android:id="@+id/encomendas"
-        android:title="Encomendas"
-        app:showAsAction="never" />
+
     <item
         android:id="@+id/logout"
         android:title="Logout"

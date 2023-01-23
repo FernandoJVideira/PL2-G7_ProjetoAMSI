@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
 
     public void loggedIn(boolean loggedIn){
         menu.findItem(R.id.carrinho_icon).setVisible(loggedIn);
-        menu.findItem(R.id.encomendas).setVisible(loggedIn);
         menu.findItem(R.id.logout).setVisible(loggedIn);
     }
 
@@ -69,11 +68,6 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
             case R.id.carrinho_icon:
                     Intent intent = new Intent(this, CarrinhoActivity.class);
                     startActivity(intent);
-                return true;
-            case R.id.encomendas: //Encomendas
-                Toast.makeText(this, "Encomendas", Toast.LENGTH_SHORT).show();
-                intent = new Intent(this, EncomendaActivity.class);
-                startActivity(intent);
                 return true;
             case R.id.logout:
                 SharedPreferences sharedPreferences = getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);

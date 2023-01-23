@@ -251,17 +251,17 @@
             app:drawableLeftCompat="@drawable/ic_edit" />
 
         <TextView
-            android:id="@+id/txtPassword"
+            android:id="@+id/txtEncomendas"
             android:layout_width="180dp"
             android:layout_height="50dp"
             android:layout_marginLeft="-10dp"
             android:background="@drawable/bg_btn"
             android:gravity="center"
             android:paddingStart="20dp"
-            android:text="@string/alterar_password"
+            android:text="@string/hist_encomendas"
             android:textColor="@color/purple_500"
             android:textSize="18sp"
-            app:drawableLeftCompat="@drawable/ic_lock" />
+            app:drawableLeftCompat="@drawable/ic_encomendas" />
 
     </LinearLayout>
         </LinearLayout>
