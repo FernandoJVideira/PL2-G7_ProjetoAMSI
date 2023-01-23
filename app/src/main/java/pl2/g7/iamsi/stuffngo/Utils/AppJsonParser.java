@@ -238,6 +238,7 @@ public class AppJsonParser {
                 int idMorada = encomendaJson.getInt("id_morada");
                 int idLoja = encomendaJson.getInt("id_loja");
 
+                linhas = new ArrayList<>();
                 for (int j = 0; j < linhasJson.length(); j++) {
 
                     JSONObject linhaJSON = linhasJson.getJSONObject(j);
