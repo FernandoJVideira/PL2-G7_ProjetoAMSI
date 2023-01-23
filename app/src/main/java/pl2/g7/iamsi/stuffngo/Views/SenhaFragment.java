@@ -50,7 +50,6 @@ public class SenhaFragment extends Fragment implements SeccoesListener, LojasLis
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_senha, container, false);
         lvSeccao = view.findViewById(R.id.ListViewSeccao);
-        Singleton.getInstance(getContext()).getAllLojasAPI();
         lojas = Singleton.getInstance(getContext()).getLojasBD();
         niceSpinner = (NiceSpinner) view.findViewById(R.id.nice_spinner);
         if(lojas != null && AppJsonParser.isConnectionInternet(getContext())) {

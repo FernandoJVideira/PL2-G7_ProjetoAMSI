@@ -63,6 +63,7 @@ public class Singleton {
     private ArrayList<Favorito> favoritos;
     private ArrayList<Loja> lojas;
     private ArrayList<Seccao> seccao;
+    private ArrayList<Morada> moradas = new ArrayList<>();
     private Carrinho carrinho;
     private BDHelper bdHelper;
     private static RequestQueue requestQueue = null;
@@ -814,6 +815,7 @@ public class Singleton {
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL_API + "/morada" + "?auth_key=" + token, new JSONObject(params),new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
+                    getUser().getMoradas().add(AppJsonParser.parseMorada(response));
                     if(moradasListener != null){
                         moradasListener.onMoradasRefresh(MainActivity.ADD);
                     }

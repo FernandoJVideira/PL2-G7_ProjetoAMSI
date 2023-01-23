@@ -217,6 +217,25 @@ public class AppJsonParser {
         return user;
     }
 
+    public static Morada parseMorada(JSONObject response){
+        Morada morada = null;
+        try {
+            int idMorada = response.getInt("idMorada");
+            String rua = response.getString("rua");
+            String cidade = response.getString("cidade");
+            String codigoPostal = response.getString("cod_postal");
+            String pais = response.getString("pais");
+            boolean activa = true;
+
+            morada = new Morada(idMorada, rua, cidade, codigoPostal, pais, activa);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return morada;
+
+    }
+
     public static ArrayList<Encomenda> parserEncomendasJson(JSONArray response) {
         ArrayList<Encomenda> encomenda = new ArrayList<>();
         Encomenda encomendaAux = null;

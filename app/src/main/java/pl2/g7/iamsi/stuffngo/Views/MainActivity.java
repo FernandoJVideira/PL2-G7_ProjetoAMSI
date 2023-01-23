@@ -99,8 +99,6 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayUseLogoEnabled(true);
@@ -108,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
 
         //MqttListener
         Singleton.getInstance(this).setMqttListener(this);
-
+        Singleton.getInstance(this).getAllLojasAPI();
         //Acess Shared Preferences and put the TOKEN as the shared Preference "Token"
         SharedPreferences sharedPreferences = getSharedPreferences("SharedPreferences", MODE_PRIVATE);
         if(sharedPreferences.getString("Token", null) != null){

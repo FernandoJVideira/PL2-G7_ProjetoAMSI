@@ -20,13 +20,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 import pl2.g7.iamsi.stuffngo.Adapters.ListaMoradasAdapter;
+import pl2.g7.iamsi.stuffngo.Listeners.MoradaListener;
 import pl2.g7.iamsi.stuffngo.Listeners.UserListener;
 import pl2.g7.iamsi.stuffngo.Models.Morada;
 import pl2.g7.iamsi.stuffngo.Models.Singleton;
 import pl2.g7.iamsi.stuffngo.Models.User;
 import pl2.g7.iamsi.stuffngo.R;
 
-public class MoradasFragment extends Fragment implements UserListener {
+public class MoradasFragment extends Fragment implements UserListener, MoradaListener {
 
     private ListView lvMoradas;
     private FloatingActionButton fabAdd;
@@ -93,5 +94,11 @@ public class MoradasFragment extends Fragment implements UserListener {
         if (!user.getMoradasActivas().isEmpty()) {
             lvMoradas.setAdapter(new ListaMoradasAdapter(getContext(), user.getMoradasActivas()));
         }
+    }
+
+    @Override
+    public void onMoradasRefresh(int operacao) {
+
+        lvMoradas.setAdapter(new ListaMoradasAdapter(getContext(), Singleton.getInstance(getContext()).getUser().getMoradasActivas()));
     }
 }
