@@ -47,4 +47,6 @@
     <string name="txtEstado">Estado:</string>
     <string name="txtDataEncomenda">Data de Encomenda:</string>
     <string name="txtMorada">Morada:</string>
+    <string name="Nome_Linha">Nome :</string>
+    <string name="Qunatidade_Linha">Quantidade :</string>
 </resources>

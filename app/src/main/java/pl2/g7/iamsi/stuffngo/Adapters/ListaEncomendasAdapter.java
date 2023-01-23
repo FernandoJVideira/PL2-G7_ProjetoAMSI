@@ -10,7 +10,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import pl2.g7.iamsi.stuffngo.Models.Encomenda;
-import pl2.g7.iamsi.stuffngo.Models.Morada;
 import pl2.g7.iamsi.stuffngo.Models.Singleton;
 import pl2.g7.iamsi.stuffngo.R;
 

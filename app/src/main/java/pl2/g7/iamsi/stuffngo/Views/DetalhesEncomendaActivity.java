@@ -2,6 +2,7 @@ package pl2.g7.iamsi.stuffngo.Views;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
@@ -9,8 +10,11 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Base64;
 
+import pl2.g7.iamsi.stuffngo.Adapters.ListaEncomendasAdapter;
+import pl2.g7.iamsi.stuffngo.Adapters.ListaLinhasEncomendaAdapter;
 import pl2.g7.iamsi.stuffngo.Listeners.DetalhesEncomendaListener;
 import pl2.g7.iamsi.stuffngo.Models.Encomenda;
 import pl2.g7.iamsi.stuffngo.Models.Singleton;
@@ -22,6 +26,7 @@ public class DetalhesEncomendaActivity extends AppCompatActivity implements Deta
     private ActivityDetalhesEncomendaBinding binding;
     private Encomenda encomenda;
     private String fatura;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +49,8 @@ public class DetalhesEncomendaActivity extends AppCompatActivity implements Deta
         binding.tvEstado.setText(encomenda.getEstado());
         binding.tvDataEncomenda.setText(encomenda.getData());
         binding.tvMorada.setText(Singleton.getInstance(this).getMorada(encomenda.getIdMorada()).toString());
+        binding.lvLinhasEncomenda.setAdapter(new ListaLinhasEncomendaAdapter(this, encomenda.getLinhas()));
+
 
         binding.fabDownload.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,7 +63,7 @@ public class DetalhesEncomendaActivity extends AppCompatActivity implements Deta
                 try (FileOutputStream fos = new FileOutputStream(file); ) {
                     // To be short I use a corrupted PDF string, so make sure to use a valid one if you want to preview the PDF file
                     byte[] decoder = new byte[0];
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         decoder = Base64.getDecoder().decode(fatura);
                     }
                     fos.write(decoder);

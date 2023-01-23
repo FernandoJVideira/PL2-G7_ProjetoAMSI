@@ -77,8 +77,8 @@ public class Singleton {
     public EncomendasListener encomendasListener = null;
     private MqttListener mqttListener = null;
     private CarrinhoListener carrinhoListener = null;
-    private static final String IP = "10.0.2.2:8081";
-    public static final String URL = "http://"+ IP; //+"/PL2-G7_ProjetoPlatSI";
+    private static final String IP = "10.0.2.2";
+    public static final String URL = "http://"+ IP +"/PL2-G7_ProjetoPlatSI";
     private static final String URL_API = URL + "/backend/web/api";
     public MqttAndroidClient mqttClient;
     private String token;
