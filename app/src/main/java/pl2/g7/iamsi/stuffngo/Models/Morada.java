@@ -48,4 +48,9 @@ public class Morada {
     public String getPais() {
         return pais;
     }
+
+    @Override
+    public String toString() {
+        return rua + ", " + cidade + ", " + cod_postal + ", " + pais;
+    }
 }

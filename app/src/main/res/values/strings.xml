@@ -43,4 +43,8 @@
     <string name="txtDeleteMsg">Tem a certeza que deseja remover esta morada?</string>
     <string name="txt_succ_add">Morada adicionada com sucesso!</string>
     <string name="txt_succ_delete">Morada apagada com sucesso!</string>
+    <string name="txtNumEncomenda">Encomenda Nº:</string>
+    <string name="txtEstado">Estado:</string>
+    <string name="txtDataEncomenda">Data de Encomenda:</string>
+    <string name="txtMorada">Morada:</string>
 </resources>
