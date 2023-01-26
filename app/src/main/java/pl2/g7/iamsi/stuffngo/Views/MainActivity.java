@@ -107,6 +107,9 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
         //MqttListener
         Singleton.getInstance(this).setMqttListener(this);
         Singleton.getInstance(this).getAllLojasAPI();
+        if(Singleton.getInstance(getApplicationContext()).mqttClient == null)
+            connectMqtt();
+
         //Acess Shared Preferences and put the TOKEN as the shared Preference "Token"
         SharedPreferences sharedPreferences = getSharedPreferences("SharedPreferences", MODE_PRIVATE);
         if(sharedPreferences.getString("Token", null) != null){
