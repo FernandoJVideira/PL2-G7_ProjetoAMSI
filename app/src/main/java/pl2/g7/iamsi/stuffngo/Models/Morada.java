@@ -56,6 +56,8 @@ public class Morada {
     }
     @Override
     public String toString() {
+        if(rua == null || cidade == null || cod_postal == null || pais == null)
+            return "Morada apagada";
         return rua + ", " + cidade + ", " + cod_postal + ", " + pais;
     }
 }

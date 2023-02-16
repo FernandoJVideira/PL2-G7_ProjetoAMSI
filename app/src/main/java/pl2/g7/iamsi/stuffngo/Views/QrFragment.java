@@ -87,6 +87,8 @@ public class QrFragment extends Fragment {
                     } else {
                         ActivityCompat.requestPermissions(activity, new
                                 String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+
+
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

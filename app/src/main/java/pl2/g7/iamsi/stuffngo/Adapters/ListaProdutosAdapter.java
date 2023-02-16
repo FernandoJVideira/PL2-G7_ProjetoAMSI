@@ -87,18 +87,18 @@ public class ListaProdutosAdapter extends BaseAdapter {
     {
         private TextView tvNome, tvPreco;
         private ImageView imgCapa;
-        private ImageButton btCart;
+        private ImageButton btCart, btFav;
 
         public ViewHolderLista(View view){
             tvNome = view.findViewById(R.id.tvNome);
             tvPreco = view.findViewById(R.id.tvPreco);
             imgCapa = view.findViewById(R.id.imageView);
             btCart = view.findViewById(R.id.btCart);
+            btFav = view.findViewById(R.id.btFav);
             if(MainActivity.TOKEN == null || !AppJsonParser.isConnectionInternet(context)){
                 btCart.setImageAlpha(75);
                 btCart.setEnabled(false);
             }
-
         }
 
         public void update(Produto produtos){

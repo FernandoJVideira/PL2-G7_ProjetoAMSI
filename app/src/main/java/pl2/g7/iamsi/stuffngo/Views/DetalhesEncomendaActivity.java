@@ -17,6 +17,7 @@ import pl2.g7.iamsi.stuffngo.Adapters.ListaEncomendasAdapter;
 import pl2.g7.iamsi.stuffngo.Adapters.ListaLinhasEncomendaAdapter;
 import pl2.g7.iamsi.stuffngo.Listeners.DetalhesEncomendaListener;
 import pl2.g7.iamsi.stuffngo.Models.Encomenda;
+import pl2.g7.iamsi.stuffngo.Models.Morada;
 import pl2.g7.iamsi.stuffngo.Models.Singleton;
 import pl2.g7.iamsi.stuffngo.R;
 import pl2.g7.iamsi.stuffngo.databinding.ActivityDetalhesEncomendaBinding;
@@ -49,7 +50,11 @@ public class DetalhesEncomendaActivity extends AppCompatActivity implements Deta
         binding.tvIdEncomenda.setText(String.valueOf(encomenda.getId()));
         binding.tvEstado.setText(encomenda.getEstado());
         binding.tvDataEncomenda.setText(encomenda.getData());
-        binding.tvMorada.setText(Singleton.getInstance(this).getMorada(encomenda.getIdMorada()).toString());
+        Morada morada = Singleton.getInstance(this).getMorada(encomenda.getIdMorada());
+        if (morada != null)
+            binding.tvMorada.setText(morada.toString());
+        else
+            binding.tvMorada.setText("Morada apagada");
         binding.lvLinhasEncomenda.setAdapter(new ListaLinhasEncomendaAdapter(this, encomenda.getLinhas()));
 
 

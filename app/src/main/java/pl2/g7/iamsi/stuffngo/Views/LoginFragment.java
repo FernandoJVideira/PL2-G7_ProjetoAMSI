@@ -44,7 +44,7 @@ public class LoginFragment extends Fragment implements LoginListener {
             @Override
             public void onClick(View view) {
                 if (!isUsernameValido(etUname) || !isPasswordValida(etPassword)) {
-                    Toast.makeText(getContext(), "Email ou Password Inválidos", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Utilizador ou Password Inválidos", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 Singleton.getInstance(getContext()).loginAPI(etUname.getText().toString(), etPassword.getText().toString(), getContext());
@@ -84,7 +84,7 @@ public class LoginFragment extends Fragment implements LoginListener {
             mainActivity.TOKEN = token;
             ((MainActivity) getActivity()).replaceFragment(new ProfileFragment());
         } else {
-            Toast.makeText(getContext(), "Email ou Password Inválidos", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Utilizador ou Password Inválidos", Toast.LENGTH_SHORT).show();
         }
     }
 }

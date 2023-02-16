@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Views.LoginActivity"
+    tools:context=".Views.LoginFragment"
     android:background="@drawable/ic_layoutbg">
 
     <androidx.cardview.widget.CardView
@@ -76,42 +76,16 @@
                 android:id="@+id/btLogin"
                 android:layout_width="250dp"
                 android:layout_height="55dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginBottom="56dp"
                 android:background="@drawable/custom_btn"
                 android:text="@string/txt_LogScreen_btn"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/etPassword"
-                app:layout_constraintStart_toStartOf="@+id/etPassword"
-                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/etPassword" />
 
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/txt_LogScreen_ForgotPwd"
-                android:textColor="@color/yellow"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="@+id/etPassword"
-                app:layout_constraintHorizontal_bias="0.932"
-                app:layout_constraintStart_toStartOf="@+id/etPassword"
-                app:layout_constraintTop_toBottomOf="@+id/etPassword" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="33dp"
-        android:layout_marginBottom="20dp"
-        android:text="@string/txt_LogScreen_CreateAcc"
-        android:textColor="@color/yellow"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

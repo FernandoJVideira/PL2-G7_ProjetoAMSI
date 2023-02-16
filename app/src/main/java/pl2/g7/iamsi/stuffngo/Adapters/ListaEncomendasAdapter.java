@@ -10,6 +10,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import pl2.g7.iamsi.stuffngo.Models.Encomenda;
+import pl2.g7.iamsi.stuffngo.Models.Morada;
 import pl2.g7.iamsi.stuffngo.Models.Singleton;
 import pl2.g7.iamsi.stuffngo.R;
 
@@ -69,7 +70,11 @@ public class ListaEncomendasAdapter extends BaseAdapter {
             tvIdEncomenda.setText(String.valueOf(encomenda.getId()));
             tvEstado.setText(encomenda.getEstado());
             tvDataEncomenda.setText(encomenda.getData());
-            tvMorada.setText(Singleton.getInstance(tvMorada.getContext()).getMorada(encomenda.getIdMorada()).toString());
+            Morada morada = Singleton.getInstance(tvMorada.getContext()).getMorada(encomenda.getIdMorada());
+            if (morada != null)
+                tvMorada.setText(morada.toString());
+            else
+                tvMorada.setText("Morada apagada");
         }
     }
 }

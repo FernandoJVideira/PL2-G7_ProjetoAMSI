@@ -2,14 +2,19 @@ package pl2.g7.iamsi.stuffngo.Views;
 
 import static java.security.AccessController.getContext;
 
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,6 +47,7 @@ import pl2.g7.iamsi.stuffngo.Utils.AppJsonParser;
 import pl2.g7.iamsi.stuffngo.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity implements MqttListener {
+    private static final int REQUEST_CAMERA_PERMISSION = 201;
     private ActivityMainBinding binding;
     private Menu menu;
     private SearchView searchView;
@@ -149,6 +155,11 @@ public class MainActivity extends AppCompatActivity implements MqttListener {
             }
             return true ;
         });
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new
+                    String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+        }
+
     }
 
     public void replaceFragment(Fragment fragment){
